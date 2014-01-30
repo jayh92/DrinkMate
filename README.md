@@ -10,3 +10,5 @@ ISAT 480
 	Present: all members
 
 2. 
+
+3. 
