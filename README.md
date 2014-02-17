@@ -10,3 +10,6 @@ PROJECT OVERVIEW FOR DRINKMATE:
       - BAC Calculator
       - Random drink generator
       - View different drinks based on user input
+
+Testing will be based on JUnit Tests
+  http://developer.android.com/tools/testing/testing_android.html
