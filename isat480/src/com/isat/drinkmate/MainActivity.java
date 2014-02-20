@@ -8,7 +8,6 @@ import android.view.View;
 
 public class MainActivity extends Activity {
 	
-	public final static String EXTRA_MESSAGE = "INTENT FROM MAIN";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
