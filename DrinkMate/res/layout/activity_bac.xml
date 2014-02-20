@@ -1,0 +1,130 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".BacActivity" >
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:text="@string/bac_button"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/btnCalc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="57dp"
+        android:text="@string/calculate_button"
+        android:textColor="@color/white" 
+        android:onClick="calculateBac"/>
+
+    <TextView
+        android:id="@+id/gender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView2"
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="78dp"
+        android:text="@string/gender_lbl"
+        android:textColor="@color/white"
+        android:textSize="32sp" />
+
+    <TextView
+        android:id="@+id/weight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/gender"
+        android:layout_below="@+id/gender"
+        android:layout_marginTop="44dp"
+        android:text="@string/weight_lbl"
+        android:textColor="@color/white"
+        android:textSize="32sp" />
+
+    <TextView
+        android:id="@+id/numDrinks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/weight"
+        android:layout_below="@+id/weight"
+        android:layout_marginTop="51dp"
+        android:text="@string/num_drinks_lbl"
+        android:textColor="@color/white"
+        android:textSize="32sp" />
+
+    <TextView
+        android:id="@+id/hours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/numDrinks"
+        android:layout_below="@+id/numDrinks"
+        android:layout_marginTop="59dp"
+        android:text="@string/hours_lbl"
+        android:textColor="@color/white"
+        android:textSize="32sp" />
+
+    <EditText
+        android:id="@+id/numDrinksEt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/numDrinks"
+        android:layout_toRightOf="@+id/btnCalc"
+        android:ems="10"
+        android:inputType="number"
+        android:textColor="@color/white" />
+
+    <EditText
+        android:id="@+id/weightEt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/numDrinks"
+        android:layout_alignLeft="@+id/numDrinksEt"
+        android:ems="10"
+        android:inputType="number"
+        android:textColor="@color/white" />
+
+    <EditText
+        android:id="@+id/genderEt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/gender"
+        android:layout_toRightOf="@+id/btnCalc"
+        android:ems="10"
+        android:hint="(M or F)"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/resultTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/hours"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="125dp"
+        android:textColor="@color/white" />
+
+    <EditText
+        android:id="@+id/timeEt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/numDrinksEt"
+        android:layout_centerVertical="true"
+        android:ems="10"
+        android:inputType="number"
+        android:textColor="@color/white" >
+
+        <requestFocus />
+    </EditText>
+
+</RelativeLayout>
