@@ -6,7 +6,7 @@ public class BacActivityTest extends TestCase {
 	
 	public void testBACAverageMale() 
 	{
-		int ounces = 48;
+	    int ounces = 48;
 	    double percent = 5;
 	    double weight = 160;
 	    int hoursDrinking = 2;
@@ -16,7 +16,7 @@ public class BacActivityTest extends TestCase {
 	}
 	public void testBacNegativeValue()
 	{
-		int ounces = 1;
+	    int ounces = 1;
 	    double percent = 5;
 	    double weight = 160;
 	    int hoursDrinking = 1;
@@ -26,7 +26,7 @@ public class BacActivityTest extends TestCase {
 	}
 	public void testAverageGirl()
 	{
-		int ounces = 32;
+	    int ounces = 32;
 	    double percent = 5;
 	    double weight = 130;
 	    int hoursDrinking = 2;
