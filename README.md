@@ -12,7 +12,6 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
   - Packages: 
       - com.isat.drinkmate
         - BacActivity.java
-        - BacActivityTest.java (needs to be moved to testing package)
         - MainActivity.java
         - RandomActivity.java
       - com.isat.drinkmate.model
@@ -20,6 +19,10 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
         - Ingredient.java
       - helper
         - DatabaseHelper.java
+      - testing
+        - BacActivityTest.java
+        - DrinkTest.java
+        - ... More classes required
 
 
 | Development Log |
@@ -32,6 +35,7 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
 - 2/23/14: Basic funtional setup for Drink.java and Ingredient.java classes added.
 - 2/24/14: DatabaseHelper.java set up to help with databae interactions
 - 2/24/14: SQLite Database can set and retrieve rows.
+- 2/26/14: RandomActivity is now selecting random drink from Database information
 
 
 | TESTING |
@@ -50,18 +54,13 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
     - INTEGER id
     - TEXT name
     - TEXT description
-    - TEXT ingredients (CSV currently)
+    - TEXT ingredients
   
   - Ingredients Table: 
     - INTEGER id
     - TEXT name
     - TEXT type 
     - REAL amount
-  
-  - Complete Table (provides connection between tables): 
-    - INTEGER id
-    - INTEGER drink_id
-    - INTEGER ingredient_id
   
 - Example Code: http://www.androidhive.info/2013/09/android-sqlite-database-with-multiple-tables/
 
@@ -76,5 +75,5 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
   - Formatting issues will cause program to terminate
 - CSV for ingredients in Drinks table may need to be changed for scalability
 - .png labels on different views need to be tested on different devices
-- Work on Database script to input pre-made values
 - Look into splash screens at beginning of program if the database gets heafty and needs to load.
+- Made Drink.java "Parcelable" to pass data in a Bundle from one intent to another. By default Android will not let you pass user created objects between Activities.
