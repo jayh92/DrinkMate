@@ -1,0 +1,56 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:columnCount="7"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    <ImageView
+        android:id="@+id/bacTitleIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnMain"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="74dp"
+        android:contentDescription="@string/welcome_message"
+        android:src="@drawable/welcome_message" />
+
+    <Button
+        android:id="@+id/btnMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/bacTitleIv"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="253dp"
+        android:text="@string/action_search"
+        android:textColor="@color/white"
+        android:onClick="startSearch"
+        android:textColorHint="@color/white" />
+
+    <Button
+        android:id="@+id/btnRandom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnMain"
+        android:layout_alignBottom="@+id/btnMain"
+        android:layout_alignRight="@+id/bacTitleIv"
+        android:onClick="startRandom"
+        android:text="@string/random_lbl"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/btnBac"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnRandom"
+        android:layout_alignBottom="@+id/btnRandom"
+        android:layout_centerHorizontal="true"
+        android:onClick="startBac"
+        android:text="@string/bac_button"
+        android:textColor="@color/white" />
+</RelativeLayout>
