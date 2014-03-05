@@ -1,4 +1,5 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+ <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,49 +9,323 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity"
 
-    <ImageView
-        android:id="@+id/bacTitleIv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/btnMain"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="74dp"
-        android:contentDescription="@string/welcome_message"
-        android:src="@drawable/welcome_message" />
+-->
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tabhost"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/black" >
 
-    <Button
-        android:id="@+id/btnMain"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/bacTitleIv"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="253dp"
-        android:text="@string/action_search"
-        android:textColor="@color/white"
-        android:onClick="startSearch"
-        android:textColorHint="@color/white" />
+    <TabWidget
+        android:id="@android:id/tabs"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+    </TabWidget>
 
-    <Button
-        android:id="@+id/btnRandom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnMain"
-        android:layout_alignBottom="@+id/btnMain"
-        android:layout_alignRight="@+id/bacTitleIv"
-        android:onClick="startRandom"
-        android:text="@string/random_lbl"
-        android:textColor="@color/white" />
+    <FrameLayout
+        android:id="@android:id/tabcontent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
 
-    <Button
-        android:id="@+id/btnBac"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnRandom"
-        android:layout_alignBottom="@+id/btnRandom"
-        android:layout_centerHorizontal="true"
-        android:onClick="startBac"
-        android:text="@string/bac_button"
-        android:textColor="@color/white" />
-</RelativeLayout>
+        <LinearLayout
+            android:id="@+id/search"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="60dp" >
+
+            <ImageView
+                android:id="@+id/ivMainTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="74dp"
+                android:contentDescription="@string/welcome_message"
+                android:paddingTop="20dp"
+                android:src="@drawable/welcome_message" />
+
+            <ImageView
+                android:id="@+id/ivTitleSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/select_ingredients_title" />
+
+            <com.isat.drinkmate.MultiSelectionSpinner
+                android:id="@+id/mySpinner1"
+                android:layout_width="560dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@color/grey" 
+                android:layout_gravity="center_horizontal|center"/>
+
+            <TextView
+                android:id="@+id/tvNameSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:layout_marginTop="20dp"
+                android:hint="(drink name)" />
+
+            <TextView
+                android:id="@+id/tvDescriptionSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:hint="(drink description)" />
+
+            <TextView
+                android:id="@+id/tvIngredientSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:hint="(ingredients)" />
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:layout_marginTop="118dp"
+                android:onClick="searchClick"
+                android:text="Search Drinks"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/random"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:paddingTop="60dp" >
+
+            <ImageView
+                android:id="@+id/titleRandomIv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:contentDescription="@string/random_lbl"
+                android:src="@drawable/random_title" />
+
+            <Button
+                android:id="@+id/btnGenerate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:layout_marginBottom="15dp"
+                android:onClick="generateDrink"
+                android:text="@string/generate_lbl"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/tvDrinkName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/tvDrinkDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/tvDrinkIngredients"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:layout_marginTop="102dp"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/BAC"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:paddingTop="60dp" >
+
+            <!-- Row 1 with single column -->
+
+            <ImageView
+                android:id="@+id/bacTitleIv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:contentDescription="@string/bac_button"
+                android:paddingTop="20dp"
+                android:src="@drawable/bac_calculator" />
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/ouncesTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/ounces_lbl"
+                    android:textColor="@color/white"
+                    android:textSize="32sp" />
+
+                <EditText
+                    android:id="@+id/ouncesEt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="20dp"
+                    android:ems="10"
+                    android:hint="(ounces)"
+                    android:inputType="number"
+                    android:textColor="@color/white" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/percentTb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/pecent_lbl"
+                    android:textColor="@color/white"
+                    android:textSize="32sp" />
+
+                <EditText
+                    android:id="@+id/percentEt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="65dp"
+                    android:ems="10"
+                    android:hint="(Alcohol %)"
+                    android:inputType="number"
+                    android:textColor="@color/white" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/gender_lbl"
+                    android:textColor="@color/white"
+                    android:textSize="32sp" />
+
+                <EditText
+                    android:id="@+id/genderEt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="187dp"
+                    android:ems="10"
+                    android:hint="@string/hint_m_f"
+                    android:textColor="@color/white" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/weight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/weight_lbl"
+                    android:textColor="@color/white"
+                    android:textSize="32sp" />
+
+                <EditText
+                    android:id="@+id/weightEt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="188dp"
+                    android:ems="10"
+                    android:hint="(Pounds)"
+                    android:inputType="number"
+                    android:textColor="@color/white" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/hours_lbl"
+                    android:textColor="@color/white"
+                    android:textSize="32sp" />
+
+                <EditText
+                    android:id="@+id/timeEt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="75dp"
+                    android:hint="(Time in Hours)"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/white" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/resultTv"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center"
+                    android:layout_marginBottom="50dp"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/white"
+                    android:textSize="24sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <Button
+                    android:id="@+id/btnCalc"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="calculateBac"
+                    android:text="@string/calculate_button"
+                    android:textColor="@color/white" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <Button
+                    android:id="@+id/btnClear"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="clearForm"
+                    android:text="@string/clear_btn"
+                    android:textColor="@color/white" />
+            </TableRow>
+        </LinearLayout>
+    </FrameLayout>
+
+</TabHost>
