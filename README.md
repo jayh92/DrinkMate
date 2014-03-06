@@ -38,6 +38,7 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
 - 2/24/14: SQLite Database can set and retrieve rows.
 - 2/26/14: RandomActivity is now selecting random drink from Database information
 - 3/05/14: Tabs have been implemented, multi selection spinner for search is working, moved functionality from removed activity classes into more light weight classes.
+- 3/06/14: Added more tests to BacCalculator, added default "m" and "f" constructors to BacCalculator.java
 
 
 | TESTING |
