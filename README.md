@@ -11,12 +11,13 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
       - View different drinks based on user input
   - Packages: 
       - com.isat.drinkmate
-        - BacActivity.java
         - MainActivity.java
-        - RandomActivity.java
+        - MultiSelectionSpinner.java
       - com.isat.drinkmate.model
+        - BacCalculator.java
         - Drink.java
         - Ingredient.java
+        - RandomDrink.java
       - helper
         - DatabaseHelper.java
       - testing
@@ -36,6 +37,7 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
 - 2/24/14: DatabaseHelper.java set up to help with databae interactions
 - 2/24/14: SQLite Database can set and retrieve rows.
 - 2/26/14: RandomActivity is now selecting random drink from Database information
+- 3/05/14: Tabs have been implemented, multi selection spinner for search is working, moved functionality from removed activity classes into more light weight classes.
 
 
 | TESTING |
@@ -69,11 +71,15 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
 - Development in progress.
   - Android Documentation: http://developer.android.com/guide/topics/search/index.html
 
+| Tabs |
+- 3 tabs (Search, Random, BAC) are currently implemented
+- http://www.codeproject.com/Articles/107693/Tabbed-Applications-in-Android
+
 | NOTES |
 
-- activity_random.xml displayed formatting issues. Made layout into <TableLayout> but further skinning needed
+- Further formatting of tabbed views still needed
   - Formatting issues will cause program to terminate
 - CSV for ingredients in Drinks table may need to be changed for scalability
-- .png labels on different views need to be tested on different devices
 - Look into splash screens at beginning of program if the database gets heafty and needs to load.
 - Made Drink.java "Parcelable" to pass data in a Bundle from one intent to another. By default Android will not let you pass user created objects between Activities.
+- All tabs are processed at MainActivity.java
