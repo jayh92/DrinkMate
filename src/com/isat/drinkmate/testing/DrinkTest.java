@@ -1,4 +1,4 @@
-package testing;
+package com.isat.drinkmate.testing;
 
 import com.isat.drinkmate.model.Drink;
 

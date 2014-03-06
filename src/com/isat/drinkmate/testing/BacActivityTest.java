@@ -1,6 +1,6 @@
-package testing;
+package com.isat.drinkmate.testing;
 
-import com.isat.drinkmate.model.BacCalculator;
+import com.isat.drinkmate.controller.BacCalculator;
 
 import junit.framework.TestCase;
 

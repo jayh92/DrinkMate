@@ -1,4 +1,4 @@
-package com.isat.drinkmate;
+package com.isat.drinkmate.view;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -8,12 +8,13 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.isat.drinkmate.model.BacCalculator;
+import com.isat.drinkmate.R;
+import com.isat.drinkmate.controller.BacCalculator;
+import com.isat.drinkmate.controller.DatabaseHelper;
+import com.isat.drinkmate.controller.RandomDrink;
 import com.isat.drinkmate.model.Drink;
 import com.isat.drinkmate.model.Ingredient;
-import com.isat.drinkmate.model.RandomDrink;
 
-import helper.DatabaseHelper;
 import android.os.Bundle;
 import android.app.Activity;
 import android.graphics.Color;
@@ -55,20 +56,27 @@ public class MainActivity extends Activity {
 		// set up tabs
 		TabHost tabHost = (TabHost) findViewById(R.id.tabhost);
 		tabHost.setup();
-		
+
 		// search tab
 		TabSpec specSearch = tabHost.newTabSpec("Search");
+		specSearch.setIndicator("Search",
+				getResources().getDrawable(R.drawable.ic_action_search));
 		specSearch.setContent(R.id.search);
-		specSearch.setIndicator("Search");
 
 		// random tab
 		TabSpec specRandom = tabHost.newTabSpec("Random");
+		specRandom.setIndicator("Random",
+				getResources().getDrawable(R.drawable.ic_action_shuffle));
 		specRandom.setContent(R.id.random);
-		specRandom.setIndicator("Random");
-		
+
 		// BAC tab
-		TabSpec specBAC = tabHost.newTabSpec("BAC").setIndicator("BAC")
+		TabSpec specBAC = tabHost
+				.newTabSpec("BAC")
+				.setIndicator("BAC",
+						getResources().getDrawable(R.drawable.ic_action_error))
 				.setContent(R.id.BAC);
+		TextView bac_res = (TextView) findViewById(R.id.resultTv);
+		bac_res.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 
 		tabHost.addTab(specSearch);
 		tabHost.addTab(specRandom);
@@ -114,7 +122,7 @@ public class MainActivity extends Activity {
 		// Log.d("Drink", d.getAllCSVDrinkInfo());
 		// //db.deleteDrink(d.getDrinkID());
 		// }
-		
+
 		// add id's to array list vals
 		for (int i = 0; i < allDrinks.size(); i++) {
 			drinks.get(i).setDrinkID(allDrinks.get(i).getDrinkID());
@@ -168,11 +176,12 @@ public class MainActivity extends Activity {
 				| Gravity.CENTER_HORIZONTAL);
 
 		// tell user a drink was found
-		Toast.makeText(getApplicationContext(), temp.getDrinkName() + "!", Toast.LENGTH_LONG).show();
-		
+		Toast.makeText(getApplicationContext(), temp.getDrinkName() + "!",
+				Toast.LENGTH_LONG).show();
+
 		// print out random drink
-		drinkName.setText("Name\n" + temp.getDrinkName());
-		description.setText("Description\n" + temp.getDrinkDescription());
+		drinkName.setText(temp.getDrinkName());
+		description.setText(temp.getDrinkDescription());
 		ingredients.setText(temp.getCSVIngredient());
 	}
 
@@ -186,19 +195,21 @@ public class MainActivity extends Activity {
 		String result = "";
 		Drink drink = new Drink();
 		String[] splitArr = query.split(",");
-		
+
 		// iterate through drinks and search for ingredients in split array
 		try {
 			if (query.length() <= 0)
 				return "Please Select Ingredients";
 			for (Drink d : drinks) {
 				for (int i = 0; i < splitArr.length; i++) {
-					if (d.getCSVIngredient().contains(splitArr[i])) {
+					if (d.getCSVIngredient().contains(
+							splitArr[i].replaceAll("^\\s+", ""))) {
 						temp++;
 					}
 				}
 				if (temp > success) {
 					drink = d;
+					success = temp;
 					temp = 0;
 				}
 			}
@@ -206,7 +217,7 @@ public class MainActivity extends Activity {
 		} catch (Exception e) {
 			System.out.println("ERROR: query to search");
 		}
-		
+
 		// output to console for error checking
 		System.out.println("Name: " + drink.getDrinkName());
 		System.out.println("Description: " + drink.getDrinkDescription());
@@ -219,19 +230,27 @@ public class MainActivity extends Activity {
 			TextView drinkIngredients = (TextView) findViewById(R.id.tvIngredientSearch);
 
 			// format text views
-			drinkName.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-			drinkDescription.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-			drinkIngredients.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-			
+			drinkName.setGravity(Gravity.CENTER_VERTICAL
+					| Gravity.CENTER_HORIZONTAL);
+			drinkDescription.setGravity(Gravity.CENTER_VERTICAL
+					| Gravity.CENTER_HORIZONTAL);
+			drinkIngredients.setGravity(Gravity.CENTER_VERTICAL
+					| Gravity.CENTER_HORIZONTAL);
+
 			drinkName.setText(drink.getDrinkName());
-			drinkDescription.setText(drink.getDrinkDescription());
-			drinkIngredients.setText(drink.getCSVIngredient());
+			drinkDescription.setText("\n" + drink.getDrinkDescription());
+			drinkIngredients.setText("\n" + drink.getCSVIngredient());
 		} catch (Exception e) {
-			System.out.println("Failed to set TextViews");
+			System.out.println("Failed to set TextView for Search");
 		}
 		return "FOUND: " + result;
 	}
 
+	/*
+	 * Calculates the BAC based on user input
+	 * 
+	 * @param View view
+	 */
 	public void calculateBac(View ciew) {
 		// initialize variables
 		int ounces = 0;
@@ -266,47 +285,50 @@ public class MainActivity extends Activity {
 			System.out.println(e);
 		}
 		// calculate BAC
-		calc = new BacCalculator(ounces, percent, userWeight, totalHours, userGender);
-		
+		calc = new BacCalculator(ounces, percent, userWeight, totalHours,
+				userGender);
+
 		// provide message to user and set text color
 		double bacCheck = calc.getBac();
 		if (bacCheck <= 0) {
-			Toast.makeText(getApplicationContext(), "You're Sober", Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), "You're Sober",
+					Toast.LENGTH_LONG).show();
 			res.setTextColor(Color.WHITE);
-		}
-		else if (bacCheck >= 0 && bacCheck <= 0.08) {
-			Toast.makeText(getApplicationContext(), "You're not above the legal limit", Toast.LENGTH_LONG).show();
-			res.setTextColor(Color.BLUE);	
-		}
-		else if (bacCheck >= 0.08 && bacCheck <= .18) {
-			Toast.makeText(getApplicationContext(), "DO NOT DRIVE!", Toast.LENGTH_LONG).show();
+		} else if (bacCheck >= 0 && bacCheck <= 0.08) {
+			Toast.makeText(getApplicationContext(),
+					"You're not above the legal limit", Toast.LENGTH_LONG)
+					.show();
+			res.setTextColor(Color.BLUE);
+		} else if (bacCheck >= 0.08 && bacCheck <= .18) {
+			Toast.makeText(getApplicationContext(), "DO NOT DRIVE!",
+					Toast.LENGTH_LONG).show();
 			res.setTextColor(Color.YELLOW);
-		}
-		else if (bacCheck >= .18) {
-			Toast.makeText(getApplicationContext(), "SEEK MEDICAL ATTENTION!", Toast.LENGTH_LONG).show();
+		} else if (bacCheck >= .18) {
+			Toast.makeText(getApplicationContext(), "SEEK MEDICAL ATTENTION!",
+					Toast.LENGTH_LONG).show();
 			res.setTextColor(Color.RED);
-		}
-		else
-			Toast.makeText(getApplicationContext(), "Invalid Input", Toast.LENGTH_LONG).show();
-		
+		} else
+			Toast.makeText(getApplicationContext(), "Invalid Input",
+					Toast.LENGTH_LONG).show();
+
 		// set text on screen
 		res.setText(calc.getBacString());
 	}
+
 	/*
 	 * Clears the form of values for BAC Calculator
 	 * 
 	 * @param View view
 	 */
-	public void clearForm(View view)
-	{
+	public void clearForm(View view) {
 		// get values
-		EditText oz = (EditText)findViewById(R.id.ouncesEt);
-		EditText perc = (EditText)findViewById(R.id.percentEt);
-		EditText gender = (EditText)findViewById(R.id.genderEt);
-		EditText weight = (EditText)findViewById(R.id.weightEt);
-		EditText hours = (EditText)findViewById(R.id.timeEt);
-		TextView res = (TextView)findViewById(R.id.resultTv);
-		
+		EditText oz = (EditText) findViewById(R.id.ouncesEt);
+		EditText perc = (EditText) findViewById(R.id.percentEt);
+		EditText gender = (EditText) findViewById(R.id.genderEt);
+		EditText weight = (EditText) findViewById(R.id.weightEt);
+		EditText hours = (EditText) findViewById(R.id.timeEt);
+		TextView res = (TextView) findViewById(R.id.resultTv);
+
 		// set them to blanks and set hints
 		oz.setText("");
 		perc.setText("");
@@ -314,10 +336,11 @@ public class MainActivity extends Activity {
 		weight.setText("");
 		hours.setText("");
 		res.setText("");
+		res.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 	}
 
 	/*
-	 * make ingredient from csv string
+	 * Creates ingredient from csv string
 	 * 
 	 * @param String ingredient
 	 * 
@@ -351,9 +374,10 @@ public class MainActivity extends Activity {
 	}
 
 	/*
-	 * make drink from csv string
+	 * Creates a drink from csv string
 	 * 
 	 * @param String drink
+	 * 
 	 * @return Drink
 	 */
 	public Drink makeDrink(String drink) {
@@ -382,7 +406,7 @@ public class MainActivity extends Activity {
 
 		return tempDrink;
 	}
-	
+
 	/*
 	 * Returns ArrayList of ingredients
 	 * 
@@ -391,6 +415,7 @@ public class MainActivity extends Activity {
 	public ArrayList<Ingredient> getDBIngredients() {
 		return ingredients;
 	}
+
 	/*
 	 * Returns ArrayList of Drinks
 	 * 

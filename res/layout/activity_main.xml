@@ -1,41 +1,26 @@
-<!--
- <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/black"
-    android:columnCount="7"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity"
-
--->
 <TabHost xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tabhost"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/black" >
-
     <TabWidget
         android:id="@android:id/tabs"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
     </TabWidget>
-
     <FrameLayout
         android:id="@android:id/tabcontent"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
-
+	
+	<!-- SEARCH TAB -->
         <LinearLayout
             android:id="@+id/search"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingTop="60dp" >
-
+            
             <ImageView
                 android:id="@+id/ivMainTitle"
                 android:layout_width="wrap_content"
@@ -53,13 +38,13 @@
                 android:layout_marginTop="20dp"
                 android:src="@drawable/select_ingredients_title" />
 
-            <com.isat.drinkmate.MultiSelectionSpinner
+            <com.isat.drinkmate.view.MultiSelectionSpinner
                 android:id="@+id/mySpinner1"
-                android:layout_width="560dp"
+                android:layout_width="372dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
                 android:layout_marginTop="20dp"
-                android:background="@color/grey" 
-                android:layout_gravity="center_horizontal|center"/>
+                android:background="@color/grey" />
 
             <TextView
                 android:id="@+id/tvNameSearch"
@@ -93,7 +78,8 @@
                 android:text="Search Drinks"
                 android:textColor="@color/white" />
         </LinearLayout>
-
+        
+		<!-- RANDOM TAB -->
         <LinearLayout
             android:id="@+id/random"
             android:layout_width="fill_parent"
@@ -108,42 +94,71 @@
                 android:layout_gravity="center_horizontal|center"
                 android:contentDescription="@string/random_lbl"
                 android:src="@drawable/random_title" />
-
             <Button
                 android:id="@+id/btnGenerate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center"
-                android:layout_marginBottom="15dp"
+
                 android:onClick="generateDrink"
                 android:text="@string/generate_lbl"
                 android:textColor="@color/white" />
+            
+			<ImageView
+                android:id="@+id/ivRandomName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                
+                android:src="@drawable/name" />
 
             <TextView
                 android:id="@+id/tvDrinkName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center"
-                android:layout_marginTop="20dp"
-                android:textColor="@color/white" />
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
+                android:textSize="24sp" />
+
+            <ImageView
+                android:id="@+id/ivRandomDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                
+                android:src="@drawable/description_lbl" />
 
             <TextView
                 android:id="@+id/tvDrinkDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center"
-                android:layout_marginTop="20dp"
-                android:textColor="@color/white" />
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+			<ImageView
+                android:id="@+id/ivRandomIngredients"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                
+                android:src="@drawable/ingredients_small_lbl" />
 
             <TextView
                 android:id="@+id/tvDrinkIngredients"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center"
-                android:layout_marginTop="102dp"
-                android:textColor="@color/white" />
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+
         </LinearLayout>
 
+        <!-- BAC TAB -->
         <LinearLayout
             android:id="@+id/BAC"
             android:layout_width="fill_parent"
@@ -292,9 +307,10 @@
                     android:id="@+id/resultTv"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center"
+                    android:layout_gravity="center_vertical|center_horizontal"
                     android:layout_marginBottom="50dp"
                     android:layout_marginTop="20dp"
+                    android:hint="\n(Please Enter Your Information)\n"
                     android:textColor="@color/white"
                     android:textSize="24sp" />
 

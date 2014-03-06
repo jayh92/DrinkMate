@@ -1,4 +1,4 @@
-package com.isat.drinkmate.model;
+package com.isat.drinkmate.controller;
 
 import java.text.DecimalFormat;
 
@@ -37,20 +37,20 @@ public class BacCalculator {
 		bac = Double.valueOf(df.format(bac));
 		
 		if (bac <= 0) {
-			res = ("\tBAC: "
+			res = ("\nBAC: "
 					+ bac
 					+ "%\nThis is a negligible amount of alcohol");
 		} else if (bac >= 0 && bac <= 0.08) {
-			res = ("BAC: " + bac + "%\nYou are not above the legal limit");
+			res = ("\nBAC: " + bac + "%\nYou are not above the legal limit");
 		} else if (bac >= 0.08 && bac <= .18) {
-			res = ("BAC: " + bac
+			res = ("\nBAC: " + bac
 					+ "%\nYou are over the legal limit");
 		} else if (bac >= .18) {
-			res = ("BAC: "
+			res = ("\nBAC: "
 					+ bac
 					+ "%\nYou have a dangerous level of booze in you");
 		} else
-			res = ("Invalid input");
+			res = ("\nERROR: Invalid input");
 		
 		return res;
 	}

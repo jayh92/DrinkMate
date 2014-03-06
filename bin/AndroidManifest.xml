@@ -23,7 +23,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.isat.drinkmate.MainActivity"
+            android:name="com.isat.drinkmate.view.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,9 +32,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.isat.drinkmate.BacActivity"
+            android:name="com.isat.drinkmate.view.BacActivity"
             android:label="@string/title_activity_bac"
-            android:parentActivityName="com.isat.drinkmate.MainActivity" >
+            android:parentActivityName="com.isat.drinkmate.view.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.isat.drinkmate.MainActivity" />
@@ -43,11 +43,11 @@
         <uses-library android:name="android.test.runner" />
 
         <activity
-            android:name="com.isat.drinkmate.RandomActivity"
+            android:name="com.isat.drinkmate.view.RandomActivity"
             android:label="@string/title_activity_random" >
         </activity>
         <activity
-            android:name="com.isat.drinkmate.SearchActivity"
+            android:name="com.isat.drinkmate.view.SearchActivity"
             android:label="@string/title_activity_search" >
         </activity>
     </application>

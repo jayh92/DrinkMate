@@ -1,4 +1,4 @@
-package com.isat.drinkmate;
+package com.isat.drinkmate.view;
 
 import java.util.Arrays;
 import java.util.LinkedList;

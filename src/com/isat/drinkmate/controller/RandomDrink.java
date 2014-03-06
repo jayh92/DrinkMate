@@ -1,7 +1,9 @@
-package com.isat.drinkmate.model;
+package com.isat.drinkmate.controller;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import com.isat.drinkmate.model.Drink;
 
 public class RandomDrink {
 	private ArrayList<Drink> drinks;
