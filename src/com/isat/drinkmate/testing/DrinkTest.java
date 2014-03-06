@@ -1,5 +1,6 @@
 package com.isat.drinkmate.testing;
 
+import com.isat.drinkmate.controller.RandomDrink;
 import com.isat.drinkmate.model.Drink;
 
 import junit.framework.TestCase;
@@ -20,6 +21,7 @@ public class DrinkTest extends TestCase {
 			description = "Description Test",
 			ingredients = "Ingredients Test";
 	private Drink testDrink = new Drink(id, name, description, ingredients);
+	private RandomDrink randomDrink = new RandomDrink();
 	
 	/*** GETTERS TESTS ***/
 	public void testGetDrinkName()
@@ -41,6 +43,11 @@ public class DrinkTest extends TestCase {
 		String result = "Ingredients Test";
 	    assertEquals(result, testDrink.getCSVIngredient());
 	}
+	public void testGetRandomDrink()
+	{
+		String result = "Test Drink";
+		assertEquals(result, randomDrink.getRandomDrink());
+	}
 	
 	/*** SETTERS TESTS ***/
 	public void testSetDrinkName()
@@ -58,7 +65,7 @@ public class DrinkTest extends TestCase {
 		testDrink.setDrinkDescription("test");
 	    assertEquals("test", testDrink.getDrinkDescription());
 	}
-	public void tesSettDrinkIngredientString()
+	public void testSettDrinkIngredientString()
 	{
 		testDrink.setDrinkIngredients("test");
 	    assertEquals("test", testDrink.getCSVIngredient());

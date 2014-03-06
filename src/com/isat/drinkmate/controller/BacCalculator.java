@@ -17,6 +17,27 @@ public class BacCalculator {
 		this.hoursDrinking = 0;
 		this.gender = "";
 	}
+	public BacCalculator(String gender){
+		if (gender.equalsIgnoreCase("m"))	// set metrics for a male
+		{
+			this.ounces = 12; // average ounces in a beer, assumes user has had 1 drink
+			this.percent = 4.5; // average alcohol content for a beer
+			this.weight = 195; // average male weight in U.S.
+			this.hoursDrinking = 1; // assumes been drinking for 1 hour
+			this.gender = "m";
+		} else if (gender.equalsIgnoreCase("f"))	// set metrics for a female
+		{
+			this.ounces = 12; // average ounces in a beer, assumes user has had 1 drink
+			this.percent = 4.5; // average alcohol content for a beer
+			this.weight = 166; // average female weight in U.S.
+			this.hoursDrinking = 1; // assumes been drinking for 1 hour
+			this.gender = "f";
+			
+		} else // set empty metrics by calling constructor w/o params
+		{
+			new BacCalculator();
+		}
+	}
 	public BacCalculator(int ounces, double percent, double weight, double hoursDrinking, String gender) {
 		this.ounces = ounces;
 		this.percent = percent;
@@ -110,5 +131,30 @@ public class BacCalculator {
 			result = 0;
 		
 		return result;
+	}
+	
+	
+	/*
+	 * All get methods
+	 */
+	public String getGender()
+	{
+		return this.gender;
+	}
+	public int getOunces()
+	{
+		return this.ounces;
+	}
+	public double getWeight()
+	{
+		return this.weight;
+	}
+	public double getHours()
+	{
+		return this.hoursDrinking;
+	}
+	public Double getPercent()
+	{
+		return this.percent;
 	}
 }

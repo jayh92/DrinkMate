@@ -17,15 +17,33 @@ public class BacActivityTest extends TestCase {
 	    double result = 0.1639655172413793;
 	    assertEquals(result, calcMale.getBac());
 	}
+	public void testAverageFemale()
+	{
+	    double result = 0.19959183673469386;
+	    assertEquals(result, calcFemale.getBac());
+	}
 	public void testBacNegativeValue()
 	{
 	    double result = 0;
 	    BacCalculator test = new BacCalculator();
 	    assertEquals(result, test.getBac());
 	}
-	public void testAverageFemale()
+	public void testOnlyGenderMale()
 	{
-	    double result = 0.19959183673469386;
-	    assertEquals(result, calcFemale.getBac());
+		double result = 195;
+		BacCalculator b = new BacCalculator("m");
+		assertEquals(result, b.getWeight());
+	}
+	public void testOnlyGenderFemale()
+	{
+		double result = 166;
+		BacCalculator b = new BacCalculator("f");
+		assertEquals(result, b.getWeight());
+	}
+	public void testGenderNotMF()
+	{
+		int result = 0;
+		BacCalculator b = new BacCalculator("invalid");
+		assertEquals(result, b.getHours());
 	}
 }
