@@ -42,7 +42,7 @@ public class BacActivityTest extends TestCase {
 	}
 	public void testGenderNotMF()
 	{
-		int result = 0;
+		double result = 0;
 		BacCalculator b = new BacCalculator("invalid");
 		assertEquals(result, b.getHours());
 	}

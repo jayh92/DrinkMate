@@ -28,4 +28,8 @@ public class RandomDrink {
 	public void setDrinkList(ArrayList<Drink> drinks) {
 		this.drinks = drinks;
 	}
+	public ArrayList<Drink> getDrinkList()
+	{
+		return drinks;
+	}
 }

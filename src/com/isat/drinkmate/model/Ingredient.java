@@ -8,7 +8,7 @@ package com.isat.drinkmate.model;
  */
 
 public class Ingredient {
-	// set up private variables
+
 	private int id;
 	private double amount;
 	private String name, type;

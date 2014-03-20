@@ -18,6 +18,10 @@ import com.isat.drinkmate.model.Ingredient;
 import android.os.Bundle;
 import android.app.Activity;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -28,15 +32,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TabHost.TabSpec;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements SensorEventListener {
 
-	public final static String EXTRA_MESSAGE = "INTENT FROM MAIN";
 	String[] INGREDIENT_ARRAY = { "Coffee Liquer,Alcohol,.25",
 			"Lemon Juice,Mixer,4", "Strawberry,Garnish,1",
 			"Blended Whiskey,Alcohol,2", "Sugar Cube,Mixer,1",
 			"Bitters,Mixer,1", "Sliced Lemon,Garnish,1", "Cherry,Garnish,1",
 			"Sliced Orange,Garnish,1", "Vodka,Alcohol,32",
 			"Fruit Punch,Mixer,64" };
+
 	String[] DRINKS_ARRAY = {
 			"Bahama Mama,A perfect drink for summer that is very popular,1,2,3",
 			"Old Fashioned,Classic blended whiskey cocktail,4,5,6,7,8,9",
@@ -48,10 +52,23 @@ public class MainActivity extends Activity {
 	private ArrayList<Drink> drinks;
 	private ArrayList<String> ingredientNameArray;
 
+	// sensor
+	private SensorManager sensorManager;
+	private boolean color = false;
+	private View view;
+	private long lastUpdate;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		// sensor
+		view = findViewById(R.id.textView1);
+		view.setBackgroundColor(Color.GREEN);
+
+		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+		lastUpdate = System.currentTimeMillis();
 
 		// set up tabs
 		TabHost tabHost = (TabHost) findViewById(R.id.tabhost);
@@ -78,6 +95,7 @@ public class MainActivity extends Activity {
 		TextView bac_res = (TextView) findViewById(R.id.resultTv);
 		bac_res.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 
+		// add tabs to tabHost
 		tabHost.addTab(specSearch);
 		tabHost.addTab(specRandom);
 		tabHost.addTab(specBAC);
@@ -93,7 +111,6 @@ public class MainActivity extends Activity {
 			Ingredient temp = makeIngredient(INGREDIENT_ARRAY[i]);
 			// int tempID = db.createIngredient(temp);
 			ingredients.add(temp);
-
 		}
 
 		// get drinks from CSV string and add to DB
@@ -136,7 +153,8 @@ public class MainActivity extends Activity {
 
 		// setup spinner for search
 		spinner = (MultiSelectionSpinner) findViewById(R.id.mySpinner1);
-		ingredientNameArray.add(0, "");
+		ingredientNameArray.add(0, ""); // add blank ingredient for display
+										// purposes
 		spinner.setItems(ingredientNameArray);
 	}
 
@@ -148,8 +166,10 @@ public class MainActivity extends Activity {
 
 	/*
 	 * Handles search listener
+	 * 
+	 * @param View view
 	 */
-	public void searchClick(View v) {
+	public void searchClick(View view) {
 		String s = spinner.getSelectedItemsAsString();
 		String res = getSearchResult(s);
 		Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG).show();
@@ -157,6 +177,8 @@ public class MainActivity extends Activity {
 
 	/*
 	 * Generates a random drink and outputs it to view
+	 * 
+	 * @param View view
 	 */
 	public void generateDrink(View view) {
 		RandomDrink rand = new RandomDrink(drinks);
@@ -189,6 +211,8 @@ public class MainActivity extends Activity {
 	 * Searches by ingredients for the most suitable drink
 	 * 
 	 * @param String query
+	 * 
+	 * @return String result
 	 */
 	public String getSearchResult(String query) {
 		int success = 0, temp = 0;
@@ -266,9 +290,9 @@ public class MainActivity extends Activity {
 		EditText weight = (EditText) findViewById(R.id.weightEt);
 		EditText hours = (EditText) findViewById(R.id.timeEt);
 
-		// result of calculations TextView
-		TextView res = (TextView) findViewById(R.id.resultTv);
-		res.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+		// // result of calculations TextView
+		// TextView res = (TextView) findViewById(R.id.resultTv);
+		// res.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 
 		// parse user inputs
 		try {
@@ -288,12 +312,22 @@ public class MainActivity extends Activity {
 		calc = new BacCalculator(ounces, percent, userWeight, totalHours,
 				userGender);
 
+		// show result
+		showBACResults(calc);
+	}
+
+	public void showBACResults(BacCalculator calc) {
+
+		// result of calculations TextView
+		TextView res = (TextView) findViewById(R.id.resultTv);
+		res.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+
 		// provide message to user and set text color
 		double bacCheck = calc.getBac();
 		if (bacCheck <= 0) {
 			Toast.makeText(getApplicationContext(), "You're Sober",
 					Toast.LENGTH_LONG).show();
-			res.setTextColor(Color.WHITE);
+			res.setTextColor(Color.GREEN);
 		} else if (bacCheck >= 0 && bacCheck <= 0.08) {
 			Toast.makeText(getApplicationContext(),
 					"You're not above the legal limit", Toast.LENGTH_LONG)
@@ -426,14 +460,25 @@ public class MainActivity extends Activity {
 	}
 
 	/*
+	 * parseIngredientCSV
+	 * 
+	 * Parses a csv file and creates appropriate Ingredient objects
+	 * 
+	 * @param String file_path
+	 * 
+	 * @return ArrayList<Ingredient>
+	 * 
 	 * NOT WORKING
 	 */
 	public ArrayList<Ingredient> parseIngredientCSV(String file_path) {
 		ArrayList<Ingredient> allIngredients = new ArrayList<Ingredient>();
 		String line = "";
-		InputStream is = getClass().getClassLoader().getResourceAsStream(
-				"ingredient.csv");
-
+		InputStream is = null;
+		try {
+			is = getClass().getClassLoader().getResourceAsStream(file_path);
+		} catch (Exception e) {
+			System.out.println("INPUT STREAM IS BAD");
+		}
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new InputStreamReader(is));
@@ -442,18 +487,76 @@ public class MainActivity extends Activity {
 				allIngredients.add(temp);
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("FILE NOT FOUND");
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("IO Exception");
 		} finally {
 			if (br != null) {
 				try {
 					br.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					System.out.println("FINAL CATCH");
 				}
 			}
 		}
 		return allIngredients;
+	}
+
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		// TODO Auto-generated method stub
+		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+			getAccelerometer(event);
+		}
+	}
+
+	private void getAccelerometer(SensorEvent event) {
+		float[] values = event.values;
+		// Movement
+		float x = values[0];
+		float y = values[1];
+		float z = values[2];
+
+		float accelationSquareRoot = (x * x + y * y + z * z)
+				/ (SensorManager.GRAVITY_EARTH * SensorManager.GRAVITY_EARTH);
+		long actualTime = System.currentTimeMillis();
+		if (accelationSquareRoot >= 2) //
+		{
+			if (actualTime - lastUpdate < 200) {
+				return;
+			}
+			lastUpdate = actualTime;
+			Toast.makeText(this, "Device was shuffed", Toast.LENGTH_SHORT)
+					.show();
+			if (color) {
+				view.setBackgroundColor(Color.GREEN);
+
+			} else {
+				view.setBackgroundColor(Color.RED);
+			}
+			color = !color;
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// register this class as a listener for the orientation and
+		// accelerometer sensors
+		sensorManager.registerListener(this,
+				sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+				SensorManager.SENSOR_DELAY_NORMAL);
+	}
+
+	@Override
+	protected void onPause() {
+		// unregister listener
+		super.onPause();
+		sensorManager.unregisterListener(this);
 	}
 }

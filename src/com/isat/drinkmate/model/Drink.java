@@ -8,7 +8,7 @@ import android.os.Parcelable;
  * Class represents a single Drink to be used with our DrinkMate application
  * 
  * ISAT 480
- * Author(s): Jackson Phillips
+ * Author(s): Jack Phillips
  */
 
 public class Drink implements Parcelable{

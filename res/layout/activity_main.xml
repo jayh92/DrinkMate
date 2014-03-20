@@ -37,7 +37,7 @@
                 android:layout_gravity="center_horizontal|center"
                 android:layout_marginTop="20dp"
                 android:src="@drawable/select_ingredients_title" />
-
+			
             <com.isat.drinkmate.view.MultiSelectionSpinner
                 android:id="@+id/mySpinner1"
                 android:layout_width="372dp"
@@ -67,6 +67,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center"
                 android:hint="(ingredients)" />
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shake to test" />
 
             <Button
                 android:id="@+id/button1"
