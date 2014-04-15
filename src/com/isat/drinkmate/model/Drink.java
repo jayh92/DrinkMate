@@ -123,6 +123,14 @@ public class Drink implements Parcelable{
 		}
 		return result;
 	}
+	/*
+	 * Returns ArrayList of Ingredients for drink
+	 * 
+	 * @return ArrayList<Ingredient>
+	 */
+	public ArrayList<Ingredient> getIngredientArrayList() {
+		return ingredientList;
+	}
 	public String getAllArrayIngredientInfo()
 	{
 		/*

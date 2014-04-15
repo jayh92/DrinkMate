@@ -20,27 +20,49 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingTop="60dp" >
-            
-            <ImageView
-                android:id="@+id/ivMainTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="74dp"
-                android:contentDescription="@string/welcome_message"
-                android:paddingTop="20dp"
-                android:src="@drawable/welcome_message" />
 
-            <ImageView
-                android:id="@+id/ivTitleSearch"
+            <TextView
+                android:id="@+id/tvSearchTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/select_ingredients_title" />
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="Welcome to DrinkMate!"
+                android:textColor="@color/bluelight"
+                android:textSize="42sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvSearchSelectDrink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:paddingTop="10dp"
+                android:text="Browse Drinks"
+                android:textColor="@color/baseblue"
+                android:textSize="32sp"
+                android:textStyle="italic" />
+
+            <Spinner
+                android:id="@+id/spinDrink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:background="@color/grey"
+                android:text="(Select Drink From List)" />
+            
+            <TextView
+                android:id="@+id/tvSearchSelectIngredient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="Search By Ingredient"
+                android:textColor="@color/baseblue"
+                android:textSize="32sp"
+                android:textStyle="italic" />
 			
             <com.isat.drinkmate.view.MultiSelectionSpinner
                 android:id="@+id/mySpinner1"
-                android:layout_width="372dp"
+                android:layout_width="745dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center"
                 android:layout_marginTop="20dp"
@@ -52,27 +74,27 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center"
                 android:layout_marginTop="20dp"
-                android:hint="(drink name)" />
+                android:hint="(No Drink Selected)"
+                android:textColor="@color/white"
+                android:textSize="36sp" />
 
             <TextView
                 android:id="@+id/tvDescriptionSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center"
-                android:hint="(drink description)" />
+                android:hint="(Description)"
+                android:textColor="@color/white"
+                android:textSize="28sp" />
 
             <TextView
                 android:id="@+id/tvIngredientSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center"
-                android:hint="(ingredients)" />
-
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Shake to test" />
+                android:hint="(Ingredients)"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
 
             <Button
                 android:id="@+id/button1"
@@ -81,8 +103,9 @@
                 android:layout_gravity="center_horizontal|center"
                 android:layout_marginTop="118dp"
                 android:onClick="searchClick"
-                android:text="Search Drinks"
+                android:text="Get Drink"
                 android:textColor="@color/white" />
+
         </LinearLayout>
         
 		<!-- RANDOM TAB -->
@@ -92,14 +115,63 @@
             android:layout_height="fill_parent"
             android:orientation="vertical"
             android:paddingTop="60dp" >
-
-            <ImageView
-                android:id="@+id/titleRandomIv"
+			<TextView
+                android:id="@+id/tvRandomTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="Shake/Click for a Drink!"
+                android:textColor="@color/baseblue"
+                android:textSize="42sp" 
+                android:textStyle="bold" />
+			<TextView
+                android:id="@+id/tvRandomDrinkNameTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="Drink Name"
+                android:textColor="@color/baseblue"
+                android:textSize="32sp" />
+            <TextView
+                android:id="@+id/tvDrinkName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center"
-                android:contentDescription="@string/random_lbl"
-                android:src="@drawable/random_title" />
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
+                android:textSize="24sp" />
+            <TextView
+                android:id="@+id/tvRandomDrinkDescriptionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="Description"
+                android:textColor="@color/baseblue"
+                android:textSize="32sp" />
+            <TextView
+                android:id="@+id/tvDrinkDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/tvRandomDrinkIngredientsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="Ingredients"
+                android:textColor="@color/baseblue"
+                android:textSize="32sp" />
+            <TextView
+                android:id="@+id/tvDrinkIngredients"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
             <Button
                 android:id="@+id/btnGenerate"
                 android:layout_width="wrap_content"
@@ -109,59 +181,6 @@
                 android:onClick="generateDrink"
                 android:text="@string/generate_lbl"
                 android:textColor="@color/white" />
-            
-			<ImageView
-                android:id="@+id/ivRandomName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center"
-                
-                android:src="@drawable/name" />
-
-            <TextView
-                android:id="@+id/tvDrinkName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/white"
-                android:textSize="24sp" />
-
-            <ImageView
-                android:id="@+id/ivRandomDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center"
-                
-                android:src="@drawable/description_lbl" />
-
-            <TextView
-                android:id="@+id/tvDrinkDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
-
-			<ImageView
-                android:id="@+id/ivRandomIngredients"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center"
-                
-                android:src="@drawable/ingredients_small_lbl" />
-
-            <TextView
-                android:id="@+id/tvDrinkIngredients"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
-
-
         </LinearLayout>
 
         <!-- BAC TAB -->
@@ -171,22 +190,20 @@
             android:layout_height="fill_parent"
             android:orientation="vertical"
             android:paddingTop="60dp" >
-
-            <!-- Row 1 with single column -->
-
-            <ImageView
-                android:id="@+id/bacTitleIv"
+     	 <TextView
+                android:id="@+id/tvBACTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center"
-                android:contentDescription="@string/bac_button"
-                android:paddingTop="20dp"
-                android:src="@drawable/bac_calculator" />
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="Calculate BAC"
+                android:textColor="@color/baseblue"
+                android:textSize="42sp" 
+                android:textStyle="bold" />
+            <!-- Row 1 with single column -->
 
             <TableRow
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
                 <TextView
                     android:id="@+id/ouncesTv"
                     android:layout_width="wrap_content"

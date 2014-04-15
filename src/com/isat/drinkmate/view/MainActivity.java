@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.isat.drinkmate.R;
 import com.isat.drinkmate.controller.BacCalculator;
@@ -26,7 +27,15 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+//import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,117 +56,206 @@ public class MainActivity extends Activity implements SensorEventListener {
 			"Jungle Juice,A necessity at any College party,10,11" };
 
 	private MultiSelectionSpinner spinner;
+	private Spinner drinkSpinner;
 	private DatabaseHelper db;
 	private ArrayList<Ingredient> ingredients;
 	private ArrayList<Drink> drinks;
-	private ArrayList<String> ingredientNameArray;
+	// used to populate spinner lists
+	private ArrayList<String> ingredientNameArray, drinkNameArray;
 
 	// sensor
 	private SensorManager sensorManager;
-	private boolean color = false;
+	private boolean shake = false;
 	private View view;
 	private long lastUpdate;
-
+	
+	boolean createDb = false;
+	boolean deleteDb = false;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		// sensor
-		view = findViewById(R.id.textView1);
-		view.setBackgroundColor(Color.GREEN);
-
-		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-		lastUpdate = System.currentTimeMillis();
-
+		
 		// set up tabs
-		TabHost tabHost = (TabHost) findViewById(R.id.tabhost);
-		tabHost.setup();
-
-		// search tab
-		TabSpec specSearch = tabHost.newTabSpec("Search");
-		specSearch.setIndicator("Search",
-				getResources().getDrawable(R.drawable.ic_action_search));
-		specSearch.setContent(R.id.search);
-
-		// random tab
-		TabSpec specRandom = tabHost.newTabSpec("Random");
-		specRandom.setIndicator("Random",
-				getResources().getDrawable(R.drawable.ic_action_shuffle));
-		specRandom.setContent(R.id.random);
-
-		// BAC tab
-		TabSpec specBAC = tabHost
-				.newTabSpec("BAC")
-				.setIndicator("BAC",
-						getResources().getDrawable(R.drawable.ic_action_error))
-				.setContent(R.id.BAC);
-		TextView bac_res = (TextView) findViewById(R.id.resultTv);
-		bac_res.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-
-		// add tabs to tabHost
-		tabHost.addTab(specSearch);
-		tabHost.addTab(specRandom);
-		tabHost.addTab(specBAC);
-
+		try {
+			TabHost tabHost = (TabHost) findViewById(R.id.tabhost);
+			tabHost.setup();
+	
+			// search tab
+			TabSpec specSearch = tabHost.newTabSpec("Search");
+			specSearch.setIndicator("Search",
+					getResources().getDrawable(R.drawable.ic_action_search));
+			specSearch.setContent(R.id.search);
+	
+			// random tab
+			TabSpec specRandom = tabHost.newTabSpec("Random");
+			specRandom.setIndicator("Random", getResources().getDrawable(R.drawable.ic_action_shuffle));
+			specRandom.setContent(R.id.random);
+	
+			// BAC tab
+			TabSpec specBAC = tabHost
+					.newTabSpec("BAC")
+					.setIndicator("BAC",
+							getResources().getDrawable(R.drawable.ic_action_error))
+					.setContent(R.id.BAC);
+			TextView bac_res = (TextView) findViewById(R.id.resultTv);
+			bac_res.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+	
+			// add tabs to tabHost
+			tabHost.addTab(specSearch);
+			tabHost.addTab(specRandom);
+			tabHost.addTab(specBAC);
+		}
+		catch (Exception e) {
+			System.out.println("TabHost Error");
+		}
+		
+		// sensor
+		try {
+			view = findViewById(R.id.random);
+			sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+			lastUpdate = System.currentTimeMillis();
+		}
+		catch (Exception e) {
+			System.out.println("Sensor Error");
+		}
+		
 		// initialize DB and ArrayLists
-		db = new DatabaseHelper(getApplicationContext());
+		//db = new DatabaseHelper(getApplicationContext());
 		ingredients = new ArrayList<Ingredient>();
 		drinks = new ArrayList<Drink>();
 		ingredientNameArray = new ArrayList<String>();
-
+		drinkNameArray = new ArrayList<String>();
+		
+		//System.out.println("DRINK(" + DRINKS_ARRAY.length + "): " + db.getDrinkCount() + " ING(" + INGREDIENT_ARRAY.length + "): " + db.getIngredientCount());
+		//db.deleteAllDrinks();
+		//db.deleteAllIngredients();
+		//System.out.println("DRINK(" + DRINKS_ARRAY.length + "): " + db.getDrinkCount() + " ING(" + INGREDIENT_ARRAY.length + "): " + db.getIngredientCount());
+		
+		try {
+			int countIngArr = 1;
 		// get ingredients from CSV string and add to DB
-		for (int i = 0; i < INGREDIENT_ARRAY.length; i++) {
-			Ingredient temp = makeIngredient(INGREDIENT_ARRAY[i]);
-			// int tempID = db.createIngredient(temp);
-			ingredients.add(temp);
+			for (int i = 0; i < INGREDIENT_ARRAY.length; i++) {
+				Ingredient temp = makeIngredient(INGREDIENT_ARRAY[i]);
+//				if (createDb || db.getIngredientCount() == 0){
+//					System.out.println("CREATE INGREDIENT MAIN(0): " + temp.getIngredientName());
+//					int tempID = db.createIngredient(temp);
+//				}
+//				if (db.getIngredientCount() <= countIngArr) {
+//					System.out.println("CREATE INGREDIENT MAIN: " + temp.getIngredientName());
+//					int tempID = db.createIngredient(temp);
+//				}
+//				else
+//					countIngArr++;
+				temp.setIngredientID(countIngArr);
+				countIngArr++;
+				System.out.println(temp.getIngredientName() + temp.getIngredientID());
+				ingredients.add(temp);
+			}
+			
+			//int countDrink = 0;
+			// get drinks from CSV string and add to DB
+			for (int i = 0; i < DRINKS_ARRAY.length; i++) {
+				Drink temp = makeDrink(DRINKS_ARRAY[i]);
+				
+//				if (createDb || db.getDrinkCount() == 0){
+//					System.out.println("CREATE DRINK MAIN(0): " + temp.getDrinkName());
+//					int tempD = db.createDrink(temp);
+//				}
+//				if (db.getDrinkCount() <= countDrink) {
+//					System.out.println("CREATE DRINK MAIN: " + temp.getDrinkName());
+//					int tempD = db.createDrink(temp);
+//				}
+//				else
+//					countDrink++;
+				drinkNameArray.add(temp.getDrinkName());
+				drinks.add(temp);
+			}
 		}
-
-		// get drinks from CSV string and add to DB
-		for (int i = 0; i < DRINKS_ARRAY.length; i++) {
-			Drink temp = makeDrink(DRINKS_ARRAY[i]);
-			drinks.add(temp);
+		catch (Exception e) {
+			System.out.println("Error using ARRAYS");
 		}
-
 		// log display number of total ingredients
-		int ingredientSize = db.getAllIngredients().size();
-		Log.d("Ingredient count", "Ingredient Count: " + ingredientSize);
-
-		// log display all ingredients
-		List<Ingredient> allIng = db.getAllIngredients();
-		for (Ingredient i : allIng) {
-			// Log.d("Ingredient ", i.getAllIngredientInfo());
-			ingredientNameArray.add(i.getIngredientName());
-			// db.deleteIngredient(i.getIngredientID());
+		//int ingredientSize = db.getIngredientCount();
+		//Log.d("Ingredient count", "Ingredient Count: " + ingredientSize);
+		try {
+			int countIng = INGREDIENT_ARRAY.length;
+			for (Ingredient i : ingredients) {
+				ingredientNameArray.add(i.getIngredientName());
+			// log display all ingredients
+			//List<Ingredient> allIng = db.getAllIngredients();
+			//for (Ingredient i : allIng) {
+				// Log.d("Ingredient ", i.getAllIngredientInfo());
+				//ingredientNameArray.add(i.getIngredientName());
+//				if (deleteDb) {
+//					db.deleteIngredient(i.getIngredientID());
+//				}
+//				if (countIng == 0) {
+//					System.out.println("DELETE INGREDIENT MAIN");
+//					db.deleteIngredient(i.getIngredientID());
+//					allIng.remove(i);
+//				}
+//				else
+//					countIng--;
+			}
 		}
-
-		// log drink count and what drinks are present in db
-		// Log.e("Drink Count", "Drink count: " + db.getDrinkCount());
-		// Log.d("Get Drinks", "Getting all drinks");
-		List<Drink> allDrinks = db.getAllDrinks();
-		// for (Drink d : allDrinks) {
-		// Log.d("Drink", d.getAllCSVDrinkInfo());
-		// //db.deleteDrink(d.getDrinkID());
-		// }
-
-		// add id's to array list vals
-		for (int i = 0; i < allDrinks.size(); i++) {
-			drinks.get(i).setDrinkID(allDrinks.get(i).getDrinkID());
-			// Log.d("Drink: ", drinks.get(i).getAllInformation());
-			drinks.get(i).setDrinkIngredients(
-					drinks.get(i).getAllArrayIngredientInfo());
+		catch (Exception e) {
+			System.out.println("INGREDIENT ARRAY ERROR");
+		}
+		//List<Drink> allDrinks;
+		try {
+			int t = 1;
+			for (Drink d : drinks) {
+				d.setDrinkID(t);
+				System.out.println(d.getDrinkName() + d.getDrinkID() + " " + d.getCSVIngredient());
+				t++;
+			}
+			// log drink count and what drinks are present in db
+//		    Log.e("Drink Count", "Drink count: " + db.getDrinkCount());
+//			 allDrinks = db.getAllDrinks();
+//			 int count = DRINKS_ARRAY.length;
+//			 for (Drink d : allDrinks) {
+//				 if (deleteDb) {
+//					 db.deleteDrink(d.getDrinkID());
+//				 }
+//				 if (count == 0) {
+//					 System.out.println("DELETE DRINK MAIN");
+//					 db.deleteDrink(d.getDrinkID());
+//					 allDrinks.remove(d);
+//				 }
+//				 else
+//					 count--;
+//			 }
+			// add id's to array list vals
+//			for (int i = 0; i < allDrinks.size(); i++) {
+//				System.out.println("ADDING IDS TO DRINKS");
+//				drinks.get(i).setDrinkID(allDrinks.get(i).getDrinkID());
+//			    Log.d("Drink: ", drinks.get(i).getAllInformation());
+//				drinks.get(i).setDrinkIngredients(
+//						drinks.get(i).getAllArrayIngredientInfo());
+//			}
+		}
+		catch (Exception e) {
+			System.out.println("MainActivity:OnCreate Drink error");
 		}
 
 		// close database
-		db.close();
+		//db.close();
 
 		// setup spinner for search
-		spinner = (MultiSelectionSpinner) findViewById(R.id.mySpinner1);
-		ingredientNameArray.add(0, ""); // add blank ingredient for display
-										// purposes
+		spinner = (MultiSelectionSpinner) findViewById(R.id.mySpinner1); // ingredients
+		ingredientNameArray.add(0, ""); // add blank ingredient for display purposes
 		spinner.setItems(ingredientNameArray);
+		
+		drinkNameArray.add(0, "");
+		drinkSpinner = (Spinner) findViewById(R.id.spinDrink);
+		ArrayAdapter dataAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, drinkNameArray);
+		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		drinkSpinner.setAdapter(dataAdapter);
 	}
-
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -170,11 +268,52 @@ public class MainActivity extends Activity implements SensorEventListener {
 	 * @param View view
 	 */
 	public void searchClick(View view) {
-		String s = spinner.getSelectedItemsAsString();
-		String res = getSearchResult(s);
+		String res = "DRINK NOT FOUND";
+		String sIngredient = spinner.getSelectedItemsAsString();
+		String drinkStr = String.valueOf(drinkSpinner.getSelectedItem());
+		
+		// browse drink spinner
+		if (drinkStr != null && drinkStr != "") {
+			res = getDrinkSearchResult(String.valueOf(drinkSpinner.getSelectedItem()));
+			drinkSpinner.setSelection(0);
+		}
+		// search by ingredients
+		else {
+			res = getSearchResult(sIngredient, spinner.getSelectedIndicies());
+		}
 		Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG).show();
 	}
-
+	
+	public String getDrinkSearchResult(String name) {
+		String result = "";
+		for (Drink temp : drinks) {
+			if (temp.getDrinkName().equalsIgnoreCase(name)) {
+				result = temp.getDrinkName();
+				try {
+					// set name, description, ingredients on TextView
+					TextView drinkName = (TextView) findViewById(R.id.tvNameSearch);
+					TextView drinkDescription = (TextView) findViewById(R.id.tvDescriptionSearch);
+					TextView drinkIngredients = (TextView) findViewById(R.id.tvIngredientSearch);
+		
+					// format text views
+					drinkName.setGravity(Gravity.CENTER_VERTICAL
+							| Gravity.CENTER_HORIZONTAL);
+					drinkDescription.setGravity(Gravity.CENTER_VERTICAL
+							| Gravity.CENTER_HORIZONTAL);
+					drinkIngredients.setGravity(Gravity.CENTER_VERTICAL
+							| Gravity.CENTER_HORIZONTAL);
+		
+					drinkName.setText(temp.getDrinkName());
+					drinkDescription.setText("\n" + temp.getDrinkDescription());
+					drinkIngredients.setText("\n" + temp.getAllArrayIngredientInfo());
+				} catch (Exception e) {
+					System.out.println("Failed to set TextView for Search");
+				}
+			}
+		}
+		return result;
+	}
+	
 	/*
 	 * Generates a random drink and outputs it to view
 	 * 
@@ -204,7 +343,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 		// print out random drink
 		drinkName.setText(temp.getDrinkName());
 		description.setText(temp.getDrinkDescription());
-		ingredients.setText(temp.getCSVIngredient());
+		ingredients.setText(temp.getAllArrayIngredientInfo());
 	}
 
 	/*
@@ -214,7 +353,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 	 * 
 	 * @return String result
 	 */
-	public String getSearchResult(String query) {
+	public String getSearchResult(String query, List<Integer> ingredientID) {
 		int success = 0, temp = 0;
 		String result = "";
 		Drink drink = new Drink();
@@ -225,10 +364,21 @@ public class MainActivity extends Activity implements SensorEventListener {
 			if (query.length() <= 0)
 				return "Please Select Ingredients";
 			for (Drink d : drinks) {
-				for (int i = 0; i < splitArr.length; i++) {
-					if (d.getCSVIngredient().contains(
-							splitArr[i].replaceAll("^\\s+", ""))) {
-						temp++;
+//				for (int i = 0; i < splitArr.length; i++) {
+//					// contains and remove white space
+//					if (d.getCSVIngredient().contains(splitArr[i].replaceAll("^\\s+", ""))) 
+//					{
+//						System.out.println("found");
+//						temp++;
+//					}
+//				}
+				ArrayList<Ingredient> tempIngredients = d.getIngredientArrayList();
+				for (int j = 0; j < tempIngredients.size(); j++) {
+					for (Integer num : ingredientID) {
+						if (tempIngredients.get(j).getIngredientID() == num) {
+							temp++;
+							System.out.println("FOUND: " + tempIngredients.get(j).getIngredientName());
+						}
 					}
 				}
 				if (temp > success) {
@@ -245,7 +395,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 		// output to console for error checking
 		System.out.println("Name: " + drink.getDrinkName());
 		System.out.println("Description: " + drink.getDrinkDescription());
-		System.out.println("Ingredient: " + drink.getCSVIngredient());
+		System.out.println("Ingredient: " + drink.getAllArrayIngredientInfo());
 
 		try {
 			// set name, description, ingredients on TextView
@@ -263,7 +413,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 			drinkName.setText(drink.getDrinkName());
 			drinkDescription.setText("\n" + drink.getDrinkDescription());
-			drinkIngredients.setText("\n" + drink.getCSVIngredient());
+			drinkIngredients.setText("\n" + drink.getAllArrayIngredientInfo());
 		} catch (Exception e) {
 			System.out.println("Failed to set TextView for Search");
 		}
@@ -381,6 +531,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 	 * @return Ingredient
 	 */
 	public Ingredient makeIngredient(String ingredient) {
+		System.out.println("makeIng: " + ingredient);
 		Ingredient tempIngredient = new Ingredient();
 		String[] splitArray = ingredient.split(",");
 		double amount = 0;
@@ -397,7 +548,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 				try {
 					amount = Double.parseDouble(splitArray[i]);
 				} catch (Exception e) {
-					System.out.println("Could not parse double");
+					Log.e("Make ingredient","Could not parse double");
 				}
 			}
 			tempIngredient.setIngredientName(tempName);
@@ -415,27 +566,44 @@ public class MainActivity extends Activity implements SensorEventListener {
 	 * @return Drink
 	 */
 	public Drink makeDrink(String drink) {
+		System.out.println("make drink " + drink);
 		Drink tempDrink = new Drink();
-		Ingredient tempIngredient = new Ingredient();
 		ArrayList<Ingredient> drinkIngredients = new ArrayList<Ingredient>();
 
 		// split csv string and set values
 		String[] splitArr = drink.split(",");
 		tempDrink.setDrinkName(splitArr[0]);
 		tempDrink.setDrinkDescription(splitArr[1]);
-
-		// loop and set ingredients for drink
+		System.out.println("Name: " + splitArr[0]);
+		System.out.println("Desc: " + splitArr[1]);
+		
 		for (int i = 2; i < splitArr.length; i++) {
-			if (i == splitArr.length - 1) {
-				tempIngredient = db
-						.getIngredient(Integer.parseInt(splitArr[i]));
-				drinkIngredients.add(tempIngredient);
-			} else {
-				tempIngredient = db
-						.getIngredient(Integer.parseInt(splitArr[i]));
-				drinkIngredients.add(tempIngredient);
+			for (int index = 0; index < ingredients.size(); index++) {
+				try {
+					// parse csv array and check if ingredient IDs match
+					int ingredientID = Integer.parseInt(splitArr[i]);
+					if (ingredientID == ingredients.get(index).getIngredientID()) {
+						drinkIngredients.add(ingredients.get(index));
+						System.out.println("args: " + ingredients.get(i).getIngredientName());
+					}
+				}
+				catch (Exception e) {
+					Log.e("makeDrink", "Failed to identify specified drink ingredient IDs");
+				}
 			}
 		}
+		
+		// loop and set ingredients for drink WITH DB
+//		for (int i = 2; i < splitArr.length; i++) {
+//			if (i == splitArr.length - 1) {
+//				tempIngredient = db.getIngredient(Integer.parseInt(splitArr[i]));
+//				drinkIngredients.add(tempIngredient);
+//			} else {
+//				tempIngredient = db.getIngredient(Integer.parseInt(splitArr[i]));
+//				drinkIngredients.add(tempIngredient);
+//			}
+//		}
+		// set the drinks ingredient list
 		tempDrink.setIngredientsArray(drinkIngredients);
 
 		return tempDrink;
@@ -531,15 +699,13 @@ public class MainActivity extends Activity implements SensorEventListener {
 				return;
 			}
 			lastUpdate = actualTime;
-			Toast.makeText(this, "Device was shuffed", Toast.LENGTH_SHORT)
-					.show();
-			if (color) {
-				view.setBackgroundColor(Color.GREEN);
+			if (shake) {
+				Log.i("shake event", "Accelerometer set up for shake");
 
 			} else {
-				view.setBackgroundColor(Color.RED);
+				generateDrink(view);
 			}
-			color = !color;
+			shake = !shake;
 		}
 	}
 

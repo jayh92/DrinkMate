@@ -18,7 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String LOG = "DatabaseHelper";
  
     // Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
  
     // Database Name
     private static final String DATABASE_NAME = "drinkmatedb";
@@ -64,7 +64,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
  
     @Override
     public void onCreate(SQLiteDatabase db) {
- 
+    	System.out.println("ON CREATE DATABASE HELPER");
+    	
         // creating required tables
         db.execSQL(CREATE_DRINKS_TABLE);
         db.execSQL(CREATE_INGREDIENTS_TABLE);
@@ -73,6 +74,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
  
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    	System.out.println("ON UPGRADE DATABASE HELPER");
         // on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DRINKS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_INGREDIENTS);
@@ -85,11 +87,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /*
      * Creating a Drink
      */
-    public int createDrink(Drink drink, String[] ing_ids)
+    public int createDrink(Drink drink)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         
-        System.out.println("CREATE DRINK" + drink.getCSVIngredient());
+        System.out.println("CREATE DRINK " + drink.getCSVIngredient());
         
         ContentValues values = new ContentValues();
        // values.put(KEY_ID, drink.getDrinkName());
@@ -101,9 +103,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int drinks_id = (int) db.insert(TABLE_DRINKS, null, values);
  
         // insert id's for reference table
-        for (String temp : ing_ids) {
-        	createCompleteTableVal(drinks_id, temp);
-        }
+//        for (String temp : ing_ids) {
+//        	createCompleteTableVal(drinks_id, temp);
+//        }
  
         return drinks_id;
     }
@@ -217,6 +219,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     	db.delete(TABLE_DRINKS, KEY_ID + " = ?", new String[] {String.valueOf(id)});
     } 
     
+    /*
+     * Delete all drinks in db
+     * 
+     */
+    public void deleteAllDrinks() {
+    	SQLiteDatabase db = this.getReadableDatabase();
+    	db.delete(TABLE_DRINKS, null, null);
+    }
+    
     /****** INGREDIENTS_TABLE METHODS ******/
     
     /**
@@ -279,23 +290,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     public Ingredient getIngredient(int ingredient_id) {
         SQLiteDatabase db = this.getReadableDatabase();
- 
+        Ingredient temp = new Ingredient();
         String selectQuery = "SELECT  * FROM " + TABLE_INGREDIENTS + " WHERE "
                 + KEY_ID + " = " + ingredient_id;
- 
+        // logging
         Log.e(LOG, selectQuery);
  
         Cursor c = db.rawQuery(selectQuery, null);
  
         if (c != null)
             c.moveToFirst();
- 
-        Ingredient temp = new Ingredient();
-        temp.setIngredientID(c.getInt(c.getColumnIndex(KEY_ID)));
-        temp.setIngredientName((c.getString(c.getColumnIndex(KEY_NAME))));
-        temp.setIngredientType((c.getString(c.getColumnIndex(KEY_TYPE))));
-        temp.setIngredientAmount((c.getDouble(c.getColumnIndex(KEY_AMOUNT))));
- 
+        try {
+	        temp.setIngredientID(c.getInt(c.getColumnIndex(KEY_ID)));
+	        temp.setIngredientName((c.getString(c.getColumnIndex(KEY_NAME))));
+	        temp.setIngredientType((c.getString(c.getColumnIndex(KEY_TYPE))));
+	        temp.setIngredientAmount((c.getDouble(c.getColumnIndex(KEY_AMOUNT))));
+        }
+	    catch (Exception e) {
+	    	System.out.println("databasehelper:getIngredient failed");
+	    }
         return temp;
     }
 
@@ -307,8 +320,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_INGREDIENTS, KEY_ID + " = ?",
                 new String[] { String.valueOf(ingredient_id) });
-        }
-    
+    }
+    /*
+     * Delete all drinks in db
+     * 
+     */
+    public void deleteAllIngredients() {
+    	SQLiteDatabase db = this.getReadableDatabase();
+    	db.delete(TABLE_INGREDIENTS, null, null);
+    }
+    /*
+     * Return the number of Drinks in Drinks table
+     * 
+     * @return int - number of drinks in DB
+     */
+    public int getIngredientCount()
+    {
+    	String countQuery = "SELECT * FROM " + TABLE_INGREDIENTS;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+ 
+        int count = cursor.getCount();
+        cursor.close();
+ 
+        return count;
+    }
     /****** COMPLETE_TABLE METHODS ******/
     
     /*
