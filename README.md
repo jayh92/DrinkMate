@@ -10,21 +10,19 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
       - Random drink generator
       - View different drinks based on user input
   - Packages: 
-      - com.isat.drinkmate
-        - MainActivity.java
-        - MultiSelectionSpinner.java
       - com.isat.drinkmate.model
-        - BacCalculator.java
         - Drink.java
         - Ingredient.java
-        - RandomDrink.java
-      - helper
+      - com.isat.drinkmate.view
+        - MainActivity.java
+        - MultiSelectionSpinner.java
+      - com.isat.drinkmate.controller
+        - BacCalculator.java
         - DatabaseHelper.java
-      - testing
+        - RandomDrink.java
+      - com.isat.drinkmate.testing
         - BacActivityTest.java
         - DrinkTest.java
-        - ... More classes required
-
 
 | Development Log |
 
@@ -39,7 +37,10 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
 - 2/26/14: RandomActivity is now selecting random drink from Database information
 - 3/05/14: Tabs have been implemented, multi selection spinner for search is working, moved functionality from removed activity classes into more light weight classes.
 - 3/06/14: Added more tests to BacCalculator, added default "m" and "f" constructors to BacCalculator.java
-
+- 3/15/14: Attempts to get open source sensor simulator failed to launch, porting to device necessary for testing "shake" functionality.
+- 4/01/14: Port to device troubles with visual assets. Changed "drawable" ImageViews to TextViews for screen compatability
+- 4/12/14: Porting to device and "shake" test to get a random drink is up and running
+- 4/15/14: Modifications to database necessary current implementation will work but is clunky.
 
 | TESTING |
 
@@ -47,7 +48,7 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
   
   - Android: http://developer.android.com/tools/testing/testing_android.html
   - JUnit: http://www.vogella.com/tutorials/JUnit/article.html
-  
+  - Sensor tests: Ported to device and tested shake functionality first by changing background color of device then to selecting a random drink based on the proper event listener. 
 
 | SQLITE DATABASE  |
 
@@ -67,20 +68,27 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
   
 - Example Code: http://www.androidhive.info/2013/09/android-sqlite-database-with-multiple-tables/
 
-| SEARCH BAR |
-
-- Development in progress.
-  - Android Documentation: http://developer.android.com/guide/topics/search/index.html
-
 | Tabs |
-- 3 tabs (Search, Random, BAC) are currently implemented
-- http://www.codeproject.com/Articles/107693/Tabbed-Applications-in-Android
+
+- OVERVIEW
+  - 3 tabs (Search, Random, BAC) are currently implemented
+  - Link to example code: http://www.codeproject.com/Articles/107693/Tabbed-Applications-in-Android
+  - Modification to formatting of each tab element aside from Search (i.e. Main) must be done programatically (cannot drag and drop)
+- SEARCH
+  - Browse drinks (Spinner) and Search by Ingredient (custom MultiSelectionSpinner)
+  - When drink is found a Toast message displays the drink name
+- RANDOM
+  - Shake to get random drink or press button
+  - Toast message with drink name when found
+- BAC
+  - Calculator is operational
+  - Displays Toast message of what is medically suggested ("You're sober, "Seek medical attention", etc)
 
 | NOTES |
 
-- Further formatting of tabbed views still needed
-  - Formatting issues will cause program to terminate
+- Further formatting of tabbed views not necessary but would add visual appeal
 - CSV for ingredients in Drinks table may need to be changed for scalability
 - Look into splash screens at beginning of program if the database gets heafty and needs to load.
 - Made Drink.java "Parcelable" to pass data in a Bundle from one intent to another. By default Android will not let you pass user created objects between Activities.
 - All tabs are processed at MainActivity.java
+- In later Android versions FragmentTabs are more common than our implementation (may be API issues however for Fragment)
