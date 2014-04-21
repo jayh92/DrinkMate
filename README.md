@@ -4,11 +4,12 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
 
 | PROJECT OVERVIEW FOR DRINKMATE |
   - Native Android development
-  - Basic features to be developed
+  - Basic features
       - Simple, intuitive User Interface
       - BAC Calculator
-      - Random drink generator
+      - Random drink generator (On shake event)
       - View different drinks based on user input
+        - User will either browse all drinks or search by ingredients
   - Packages: 
       - com.isat.drinkmate.model
         - Drink.java
@@ -41,11 +42,12 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
 - 4/01/14: Port to device troubles with visual assets. Changed "drawable" ImageViews to TextViews for screen compatability
 - 4/12/14: Porting to device and "shake" test to get a random drink is up and running
 - 4/15/14: Modifications to database necessary current implementation will work but is clunky.
+- 4/18/14: All for debugging and application information has been converted into a LogCat implementation.
+- 4/21/14: Database V.3 is being used. Code cleaned up in MainActivity.java and DatabaseHelper.java
 
 | TESTING |
 
-- Testing will be based on JUnit Tests and Android Test Suite. Android's test suite is based on JUnit tests and they can implement components of the phone. 
-  
+-  Android's test suite is based on JUnit tests and they can implement components of the phone. Class tests have been implemented in the com.isat.drinkmate.testing package.
   - Android: http://developer.android.com/tools/testing/testing_android.html
   - JUnit: http://www.vogella.com/tutorials/JUnit/article.html
   - Sensor tests: Ported to device and tested shake functionality first by changing background color of device then to selecting a random drink based on the proper event listener. 
