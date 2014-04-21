@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import com.isat.drinkmate.R;
 import com.isat.drinkmate.controller.BacCalculator;
@@ -27,14 +27,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-//import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -43,23 +37,36 @@ import android.widget.TabHost.TabSpec;
 
 public class MainActivity extends Activity implements SensorEventListener {
 
-	String[] INGREDIENT_ARRAY = { "Coffee Liquer,Alcohol,.25",
-			"Lemon Juice,Mixer,4", "Strawberry,Garnish,1",
-			"Blended Whiskey,Alcohol,2", "Sugar Cube,Mixer,1",
-			"Bitters,Mixer,1", "Sliced Lemon,Garnish,1", "Cherry,Garnish,1",
-			"Sliced Orange,Garnish,1", "Vodka,Alcohol,32",
-			"Fruit Punch,Mixer,64" };
-
-	String[] DRINKS_ARRAY = {
+	// Ingredient Array - NOTE Drinks will reuse ingredients
+	private String[] INGREDIENT_ARRAY = { "Coffee Liquer,Alcohol,.25", // Bahama Mama
+			"Lemon Juice,Mixer,4", "Strawberry,Garnish,1", // Bahama Mama cont.
+			"Blended Whiskey,Alcohol,2", "Sugar Cube,Mixer,1", // Old Fashioned
+			"Bitters,Mixer,1", "Sliced Lemon,Garnish,1", "Cherry,Garnish,1","Sliced Orange,Garnish,1", // Old Fashioned cont.
+			"Vodka,Alcohol,32", "Fruit Punch,Mixer,64", // Jungle Juice
+			"Gin,Alcohol,2", "Tonic Water,Mixer,5","Lime Wedge,Garnish,1", // Gin and Tonic
+			"Goldschlager,Alcohol,.5", "Jose Cuervo Tequila,Alcohol,.5",  // 49er Gold Rush
+	 		"Alize,Alcohol,2", "Grand Marnier,Alcohol,1", // 3rd Wheel
+	 		"Malt Liquor,Alcohol,35", "Orange Juice,Mixer,5" }; // Brass Monkey
+	
+	// Drink Array NAME, DESCRIPTION, INGREDIENT IDs
+	private String[] DRINKS_ARRAY = {
 			"Bahama Mama,A perfect drink for summer that is very popular,1,2,3",
 			"Old Fashioned,Classic blended whiskey cocktail,4,5,6,7,8,9",
-			"Jungle Juice,A necessity at any College party,10,11" };
+			"Jungle Juice,A necessity at any College party,10,11",
+			"Gin and Tonic,Simple highball glass drink that tastes kind of like a Christmas tree,12,13,14",
+			"49er Gold Rush,A Cinnamon shooter with extra kick,15,16",
+			"3rd Wheel,Perfect for awkward nights out,17,18",
+			"Brass Monkey,The funky monkey is back with this Beastie Boys drink,19,20", 
+			"Garbage Pale,Everything in your cabinet goes in your glass!,1,3,5,10,12,15,16,17", 
+			"Vodka Tonic,A variation on the Gin and Tonic this cocktail is one that is never going away,10,13,14",
+			"Virgin Cocktail,Take up your Designated Driver duties this weekend,2,11,13" };
 
-	private MultiSelectionSpinner spinner;
-	private Spinner drinkSpinner;
-	private DatabaseHelper db;
+	private MultiSelectionSpinner spinner; // ingredient spinner
+	private Spinner drinkSpinner;		   // drink spinner
+	private DatabaseHelper db;			   // Database
 	private ArrayList<Ingredient> ingredients;
 	private ArrayList<Drink> drinks;
+	
 	// used to populate spinner lists
 	private ArrayList<String> ingredientNameArray, drinkNameArray;
 
@@ -68,9 +75,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 	private boolean shake = false;
 	private View view;
 	private long lastUpdate;
-	
-	boolean createDb = false;
-	boolean deleteDb = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +112,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 			tabHost.addTab(specBAC);
 		}
 		catch (Exception e) {
-			System.out.println("TabHost Error");
+			Log.e("TAB ERROR", "Error with initializing TabHost");
 		}
 		
 		// sensor
@@ -118,137 +122,85 @@ public class MainActivity extends Activity implements SensorEventListener {
 			lastUpdate = System.currentTimeMillis();
 		}
 		catch (Exception e) {
-			System.out.println("Sensor Error");
+			Log.e("SENSOR ERROR", "Error initializing Accelerometer Sensor");
 		}
 		
 		// initialize DB and ArrayLists
-		//db = new DatabaseHelper(getApplicationContext());
+		db = new DatabaseHelper(getApplicationContext());
 		ingredients = new ArrayList<Ingredient>();
 		drinks = new ArrayList<Drink>();
 		ingredientNameArray = new ArrayList<String>();
 		drinkNameArray = new ArrayList<String>();
 		
-		//System.out.println("DRINK(" + DRINKS_ARRAY.length + "): " + db.getDrinkCount() + " ING(" + INGREDIENT_ARRAY.length + "): " + db.getIngredientCount());
-		//db.deleteAllDrinks();
-		//db.deleteAllIngredients();
-		//System.out.println("DRINK(" + DRINKS_ARRAY.length + "): " + db.getDrinkCount() + " ING(" + INGREDIENT_ARRAY.length + "): " + db.getIngredientCount());
+		// Display DB info in log
+		Log.i("DB INFO", "DRINK(" + DRINKS_ARRAY.length + "): " + db.getDrinkCount() + " ING(" + INGREDIENT_ARRAY.length + "): " + db.getIngredientCount());
 		
 		try {
-			int countIngArr = 1;
-		// get ingredients from CSV string and add to DB
+			int countIngArr = 1; // used to set IDs
+			int dbIngredientSize = db.getIngredientCount();
+			
+			// create ingredients from array and add to db
 			for (int i = 0; i < INGREDIENT_ARRAY.length; i++) {
 				Ingredient temp = makeIngredient(INGREDIENT_ARRAY[i]);
-//				if (createDb || db.getIngredientCount() == 0){
-//					System.out.println("CREATE INGREDIENT MAIN(0): " + temp.getIngredientName());
-//					int tempID = db.createIngredient(temp);
-//				}
-//				if (db.getIngredientCount() <= countIngArr) {
-//					System.out.println("CREATE INGREDIENT MAIN: " + temp.getIngredientName());
-//					int tempID = db.createIngredient(temp);
-//				}
-//				else
-//					countIngArr++;
 				temp.setIngredientID(countIngArr);
 				countIngArr++;
-				System.out.println(temp.getIngredientName() + temp.getIngredientID());
 				ingredients.add(temp);
+
+				// add to db if necessary
+				if ((countIngArr - 1) > dbIngredientSize) {
+					db.createIngredient(temp);
+				}
 			}
 			
-			//int countDrink = 0;
 			// get drinks from CSV string and add to DB
 			for (int i = 0; i < DRINKS_ARRAY.length; i++) {
 				Drink temp = makeDrink(DRINKS_ARRAY[i]);
-				
-//				if (createDb || db.getDrinkCount() == 0){
-//					System.out.println("CREATE DRINK MAIN(0): " + temp.getDrinkName());
-//					int tempD = db.createDrink(temp);
-//				}
-//				if (db.getDrinkCount() <= countDrink) {
-//					System.out.println("CREATE DRINK MAIN: " + temp.getDrinkName());
-//					int tempD = db.createDrink(temp);
-//				}
-//				else
-//					countDrink++;
 				drinkNameArray.add(temp.getDrinkName());
 				drinks.add(temp);
 			}
 		}
 		catch (Exception e) {
-			System.out.println("Error using ARRAYS");
+			Log.e("ERROR DRINK ARRAY", "Error using ARRAYS");
 		}
-		// log display number of total ingredients
-		//int ingredientSize = db.getIngredientCount();
-		//Log.d("Ingredient count", "Ingredient Count: " + ingredientSize);
+		// populate name array
 		try {
-			int countIng = INGREDIENT_ARRAY.length;
 			for (Ingredient i : ingredients) {
 				ingredientNameArray.add(i.getIngredientName());
-			// log display all ingredients
-			//List<Ingredient> allIng = db.getAllIngredients();
-			//for (Ingredient i : allIng) {
-				// Log.d("Ingredient ", i.getAllIngredientInfo());
-				//ingredientNameArray.add(i.getIngredientName());
-//				if (deleteDb) {
-//					db.deleteIngredient(i.getIngredientID());
-//				}
-//				if (countIng == 0) {
-//					System.out.println("DELETE INGREDIENT MAIN");
-//					db.deleteIngredient(i.getIngredientID());
-//					allIng.remove(i);
-//				}
-//				else
-//					countIng--;
 			}
 		}
 		catch (Exception e) {
-			System.out.println("INGREDIENT ARRAY ERROR");
+			Log.e("ERROR INGREDIENT ARRAY", "Error using ARRAYS");
 		}
-		//List<Drink> allDrinks;
 		try {
+			// set Drink IDs in ArrayList<Drink>
 			int t = 1;
+			int drinkSize = db.getDrinkCount();
 			for (Drink d : drinks) {
 				d.setDrinkID(t);
-				System.out.println(d.getDrinkName() + d.getDrinkID() + " " + d.getCSVIngredient());
+				Log.i("SET DRINK ID", d.getDrinkName() + d.getDrinkID() + " " + d.getCSVIngredient());
 				t++;
+				
+				// add drink to DB if necessary
+				if (drinks.size() > drinkSize) {
+					db.createDrink(d);
+				}
 			}
-			// log drink count and what drinks are present in db
-//		    Log.e("Drink Count", "Drink count: " + db.getDrinkCount());
-//			 allDrinks = db.getAllDrinks();
-//			 int count = DRINKS_ARRAY.length;
-//			 for (Drink d : allDrinks) {
-//				 if (deleteDb) {
-//					 db.deleteDrink(d.getDrinkID());
-//				 }
-//				 if (count == 0) {
-//					 System.out.println("DELETE DRINK MAIN");
-//					 db.deleteDrink(d.getDrinkID());
-//					 allDrinks.remove(d);
-//				 }
-//				 else
-//					 count--;
-//			 }
-			// add id's to array list vals
-//			for (int i = 0; i < allDrinks.size(); i++) {
-//				System.out.println("ADDING IDS TO DRINKS");
-//				drinks.get(i).setDrinkID(allDrinks.get(i).getDrinkID());
-//			    Log.d("Drink: ", drinks.get(i).getAllInformation());
-//				drinks.get(i).setDrinkIngredients(
-//						drinks.get(i).getAllArrayIngredientInfo());
-//			}
 		}
 		catch (Exception e) {
-			System.out.println("MainActivity:OnCreate Drink error");
+			Log.e("MainActivity:OnCreate", "Failed to create Drink");
 		}
-
+		
 		// close database
-		//db.close();
+		db.close();
 
-		// setup spinner for search
+		// setup spinner for search by ingredient
 		spinner = (MultiSelectionSpinner) findViewById(R.id.mySpinner1); // ingredients
 		ingredientNameArray.add(0, ""); // add blank ingredient for display purposes
-		spinner.setItems(ingredientNameArray);
+		spinner.setItems(ingredientNameArray); // set MultiSelectionSpinner for ingredients
 		
+		// setup spinner for browse by drink
 		drinkNameArray.add(0, "");
+		Collections.sort(drinkNameArray); // alphabetize
 		drinkSpinner = (Spinner) findViewById(R.id.spinDrink);
 		ArrayAdapter dataAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, drinkNameArray);
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -283,7 +235,12 @@ public class MainActivity extends Activity implements SensorEventListener {
 		}
 		Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG).show();
 	}
-	
+	/*
+	 * Returns the result of a users Search Result and sets the TextView on screen
+	 * 
+	 * @param String name
+	 * @return Drink name that is found
+	 */
 	public String getDrinkSearchResult(String name) {
 		String result = "";
 		for (Drink temp : drinks) {
@@ -307,7 +264,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 					drinkDescription.setText("\n" + temp.getDrinkDescription());
 					drinkIngredients.setText("\n" + temp.getAllArrayIngredientInfo());
 				} catch (Exception e) {
-					System.out.println("Failed to set TextView for Search");
+					Log.e("getDrinkSearchResult ERROR", "Failed to set TextView for Search");
 				}
 			}
 		}
@@ -315,7 +272,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 	}
 	
 	/*
-	 * Generates a random drink and outputs it to view
+	 * Generates a random drink and outputs it to view - used by RANDOM tab
 	 * 
 	 * @param View view
 	 */
@@ -347,7 +304,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 	}
 
 	/*
-	 * Searches by ingredients for the most suitable drink
+	 * Searches by ingredients for the most suitable drink - used by SEARCH tab
 	 * 
 	 * @param String query
 	 * 
@@ -364,23 +321,15 @@ public class MainActivity extends Activity implements SensorEventListener {
 			if (query.length() <= 0)
 				return "Please Select Ingredients";
 			for (Drink d : drinks) {
-//				for (int i = 0; i < splitArr.length; i++) {
-//					// contains and remove white space
-//					if (d.getCSVIngredient().contains(splitArr[i].replaceAll("^\\s+", ""))) 
-//					{
-//						System.out.println("found");
-//						temp++;
-//					}
-//				}
 				ArrayList<Ingredient> tempIngredients = d.getIngredientArrayList();
 				for (int j = 0; j < tempIngredients.size(); j++) {
 					for (Integer num : ingredientID) {
 						if (tempIngredients.get(j).getIngredientID() == num) {
 							temp++;
-							System.out.println("FOUND: " + tempIngredients.get(j).getIngredientName());
 						}
 					}
 				}
+				// set drink based on how many ingredients are checked for it
 				if (temp > success) {
 					drink = d;
 					success = temp;
@@ -389,13 +338,13 @@ public class MainActivity extends Activity implements SensorEventListener {
 			}
 			result = drink.getDrinkName();
 		} catch (Exception e) {
-			System.out.println("ERROR: query to search");
+			Log.e("MainActivity:getSearchResult", "ERROR: query to search");
 		}
 
-		// output to console for error checking
-		System.out.println("Name: " + drink.getDrinkName());
-		System.out.println("Description: " + drink.getDrinkDescription());
-		System.out.println("Ingredient: " + drink.getAllArrayIngredientInfo());
+		// output to log for error checking
+		Log.i("MainActivity:getSearchResult", "Name: " + drink.getDrinkName());
+		Log.i("MainActivity:getSearchResult","Description: " + drink.getDrinkDescription());
+		Log.i("MainActivity:getSearchResult", "Ingredient: " + drink.getAllArrayIngredientInfo());
 
 		try {
 			// set name, description, ingredients on TextView
@@ -415,13 +364,13 @@ public class MainActivity extends Activity implements SensorEventListener {
 			drinkDescription.setText("\n" + drink.getDrinkDescription());
 			drinkIngredients.setText("\n" + drink.getAllArrayIngredientInfo());
 		} catch (Exception e) {
-			System.out.println("Failed to set TextView for Search");
+			Log.e("getSearchResult ERROR", "Failed to set TextView for Search");
 		}
 		return "FOUND: " + result;
 	}
 
 	/*
-	 * Calculates the BAC based on user input
+	 * Calculates the BAC based on user input - used by BAC tab
 	 * 
 	 * @param View view
 	 */
@@ -440,10 +389,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 		EditText weight = (EditText) findViewById(R.id.weightEt);
 		EditText hours = (EditText) findViewById(R.id.timeEt);
 
-		// // result of calculations TextView
-		// TextView res = (TextView) findViewById(R.id.resultTv);
-		// res.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-
 		// parse user inputs
 		try {
 			totalHours = Double.parseDouble(hours.getText().toString());
@@ -451,12 +396,12 @@ public class MainActivity extends Activity implements SensorEventListener {
 			percent = Double.parseDouble(perc.getText().toString());
 			userWeight = Double.parseDouble(weight.getText().toString());
 		} catch (NumberFormatException e) {
-			System.out.println(e);
+			Log.e("MainActivity:calculateBac() ERROR", "Could not parse numeric inputs");
 		}
 		try {
 			userGender = gender.getText().toString().substring(0, 1);
 		} catch (Exception e) {
-			System.out.println(e);
+			Log.e("MainActivity:calculateBac() ERROR", "Could not set user gender");
 		}
 		// calculate BAC
 		calc = new BacCalculator(ounces, percent, userWeight, totalHours,
@@ -465,7 +410,12 @@ public class MainActivity extends Activity implements SensorEventListener {
 		// show result
 		showBACResults(calc);
 	}
-
+	
+	/*
+	 * Set and display on screen the calculations of the BAC calculator
+	 * 
+	 * @param BacCalculator calc - object that represents user BAC calc
+	 */
 	public void showBACResults(BacCalculator calc) {
 
 		// result of calculations TextView
@@ -476,7 +426,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 		double bacCheck = calc.getBac();
 		if (bacCheck <= 0) {
 			Toast.makeText(getApplicationContext(), "You're Sober",
-					Toast.LENGTH_LONG).show();
+					Toast.LENGTH_SHORT).show();
 			res.setTextColor(Color.GREEN);
 		} else if (bacCheck >= 0 && bacCheck <= 0.08) {
 			Toast.makeText(getApplicationContext(),
@@ -485,11 +435,11 @@ public class MainActivity extends Activity implements SensorEventListener {
 			res.setTextColor(Color.BLUE);
 		} else if (bacCheck >= 0.08 && bacCheck <= .18) {
 			Toast.makeText(getApplicationContext(), "DO NOT DRIVE!",
-					Toast.LENGTH_LONG).show();
+					Toast.LENGTH_SHORT).show();
 			res.setTextColor(Color.YELLOW);
 		} else if (bacCheck >= .18) {
 			Toast.makeText(getApplicationContext(), "SEEK MEDICAL ATTENTION!",
-					Toast.LENGTH_LONG).show();
+					Toast.LENGTH_SHORT).show();
 			res.setTextColor(Color.RED);
 		} else
 			Toast.makeText(getApplicationContext(), "Invalid Input",
@@ -500,7 +450,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 	}
 
 	/*
-	 * Clears the form of values for BAC Calculator
+	 * Clears the form of values for BAC Calculator - used by BAC tab
 	 * 
 	 * @param View view
 	 */
@@ -527,7 +477,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 	 * Creates ingredient from csv string
 	 * 
 	 * @param String ingredient
-	 * 
 	 * @return Ingredient
 	 */
 	public Ingredient makeIngredient(String ingredient) {
@@ -562,11 +511,10 @@ public class MainActivity extends Activity implements SensorEventListener {
 	 * Creates a drink from csv string
 	 * 
 	 * @param String drink
-	 * 
 	 * @return Drink
 	 */
 	public Drink makeDrink(String drink) {
-		System.out.println("make drink " + drink);
+		Log.i("MainActivity: makeDrink", drink);
 		Drink tempDrink = new Drink();
 		ArrayList<Ingredient> drinkIngredients = new ArrayList<Ingredient>();
 
@@ -574,9 +522,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 		String[] splitArr = drink.split(",");
 		tempDrink.setDrinkName(splitArr[0]);
 		tempDrink.setDrinkDescription(splitArr[1]);
-		System.out.println("Name: " + splitArr[0]);
-		System.out.println("Desc: " + splitArr[1]);
 		
+		// loop through split array
 		for (int i = 2; i < splitArr.length; i++) {
 			for (int index = 0; index < ingredients.size(); index++) {
 				try {
@@ -584,92 +531,19 @@ public class MainActivity extends Activity implements SensorEventListener {
 					int ingredientID = Integer.parseInt(splitArr[i]);
 					if (ingredientID == ingredients.get(index).getIngredientID()) {
 						drinkIngredients.add(ingredients.get(index));
-						System.out.println("args: " + ingredients.get(i).getIngredientName());
 					}
 				}
 				catch (Exception e) {
-					Log.e("makeDrink", "Failed to identify specified drink ingredient IDs");
+					Log.e("MainActivity:makeDrink", "Failed to identify specified drink ingredient IDs");
 				}
 			}
 		}
-		
-		// loop and set ingredients for drink WITH DB
-//		for (int i = 2; i < splitArr.length; i++) {
-//			if (i == splitArr.length - 1) {
-//				tempIngredient = db.getIngredient(Integer.parseInt(splitArr[i]));
-//				drinkIngredients.add(tempIngredient);
-//			} else {
-//				tempIngredient = db.getIngredient(Integer.parseInt(splitArr[i]));
-//				drinkIngredients.add(tempIngredient);
-//			}
-//		}
 		// set the drinks ingredient list
 		tempDrink.setIngredientsArray(drinkIngredients);
-
 		return tempDrink;
 	}
 
-	/*
-	 * Returns ArrayList of ingredients
-	 * 
-	 * @return ArrayList<Ingredient>
-	 */
-	public ArrayList<Ingredient> getDBIngredients() {
-		return ingredients;
-	}
-
-	/*
-	 * Returns ArrayList of Drinks
-	 * 
-	 * @return ArrayList<Drink>
-	 */
-	public ArrayList<Drink> getDBDrinks() {
-		return drinks;
-	}
-
-	/*
-	 * parseIngredientCSV
-	 * 
-	 * Parses a csv file and creates appropriate Ingredient objects
-	 * 
-	 * @param String file_path
-	 * 
-	 * @return ArrayList<Ingredient>
-	 * 
-	 * NOT WORKING
-	 */
-	public ArrayList<Ingredient> parseIngredientCSV(String file_path) {
-		ArrayList<Ingredient> allIngredients = new ArrayList<Ingredient>();
-		String line = "";
-		InputStream is = null;
-		try {
-			is = getClass().getClassLoader().getResourceAsStream(file_path);
-		} catch (Exception e) {
-			System.out.println("INPUT STREAM IS BAD");
-		}
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new InputStreamReader(is));
-			while ((line = br.readLine()) != null) {
-				Ingredient temp = makeIngredient(line);
-				allIngredients.add(temp);
-			}
-		} catch (FileNotFoundException e) {
-			System.out.println("FILE NOT FOUND");
-		} catch (IOException e) {
-			System.out.println("IO Exception");
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					System.out.println("FINAL CATCH");
-				}
-			}
-		}
-		return allIngredients;
-	}
-
+	/** ACCELEROMETER SENSOR **/
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO Auto-generated method stub
@@ -690,6 +564,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 		float y = values[1];
 		float z = values[2];
 
+		// compare to earths gravity so when at rest it does not activate listener
 		float accelationSquareRoot = (x * x + y * y + z * z)
 				/ (SensorManager.GRAVITY_EARTH * SensorManager.GRAVITY_EARTH);
 		long actualTime = System.currentTimeMillis();
@@ -700,7 +575,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 			}
 			lastUpdate = actualTime;
 			if (shake) {
-				Log.i("shake event", "Accelerometer set up for shake");
+				Log.i("MainActivity:getAccelerometer", "Accelerometer set up for shake");
 
 			} else {
 				generateDrink(view);
@@ -712,8 +587,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		// register this class as a listener for the orientation and
-		// accelerometer sensors
+		// register this class as a listener for the orientation and accelerometer sensors
 		sensorManager.registerListener(this,
 				sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 				SensorManager.SENSOR_DELAY_NORMAL);
@@ -725,4 +599,24 @@ public class MainActivity extends Activity implements SensorEventListener {
 		super.onPause();
 		sensorManager.unregisterListener(this);
 	}
+	
+	/** HELPER METHODS **/
+	/*
+	 * Returns ArrayList of ingredients
+	 * 
+	 * @return ArrayList<Ingredient>
+	 */
+	public ArrayList<Ingredient> getDBIngredients() {
+		return ingredients;
+	}
+
+	/*
+	 * Returns ArrayList of Drinks
+	 * 
+	 * @return ArrayList<Drink>
+	 */
+	public ArrayList<Drink> getDBDrinks() {
+		return drinks;
+	}
+	
 }
