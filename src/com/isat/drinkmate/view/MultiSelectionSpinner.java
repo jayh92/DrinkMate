@@ -12,7 +12,14 @@ import android.util.AttributeSet;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-
+/*
+ * MultiSelectionSpiner.java
+ * 
+ * Class represents a custom made spinner object that allows users to select a list of options
+ * 
+ * ISAT 480
+ * Author(s): Jack Phillips
+ */
 public class MultiSelectionSpinner extends Spinner implements
 		OnMultiChoiceClickListener {
 	String[] _items = null;

@@ -3,9 +3,16 @@ package com.isat.drinkmate.testing;
 import com.isat.drinkmate.controller.BacCalculator;
 
 import junit.framework.TestCase;
-
+/*
+ * BacActivityTest tests the BacCalculator.java class
+ * 
+ * @Author(s): Jack Phillips, Jay Harris
+ * 
+ * NOTE: MUST ADD TO ANDROID MANIFEST FOR TESTING TO WORK!
+ */
 public class BacActivityTest extends TestCase {
 	
+	// used by different tester methods
 	private int ounces = 48;
 	private double percent = 5, weight = 160, hoursDrinking = 2;
 	private String male = "m", female = "f";

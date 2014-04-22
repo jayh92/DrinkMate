@@ -1,6 +1,8 @@
 package com.isat.drinkmate.model;
 
 /*
+ * Ingredient.java
+ * 
  * Class represents a single Ingredient to be used with our DrinkMate application
  * 
  * ISAT 480

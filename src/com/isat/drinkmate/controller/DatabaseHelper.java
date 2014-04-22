@@ -12,7 +12,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
+/*
+ * DatabaseHelper.java
+ * 
+ * Class represents a the database that is used within the application
+ * 
+ * ISAT 480
+ * Author(s): Jack Phillips
+ */
 public class DatabaseHelper extends SQLiteOpenHelper {
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
@@ -54,9 +61,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     		+ TABLE_INGREDIENTS + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME
     		+ " TEXT," + KEY_TYPE + " TEXT, " + KEY_AMOUNT + " REAL)";
     
-    private static final String CREATE_COMPLETE_TABLE = "CREATE TABLE "
-    		+ TABLE_COMPLETE + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_DRINK_ID
-    		+ " TEXT," + KEY_INGREDIENT_ID + " TEXT)"; 
     
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -64,7 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
  
     @Override
     public void onCreate(SQLiteDatabase db) {
-    	System.out.println("ON CREATE DATABASE HELPER");
+    	Log.i("DatabaseHelper:onCreate", "ON CREATE DATABASE HELPER");
     	
         // creating required tables
         db.execSQL(CREATE_DRINKS_TABLE);
@@ -74,11 +78,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
  
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    	System.out.println("ON UPGRADE DATABASE HELPER");
+    	Log.i("DatabaseHelper:onUpgrade", "DB updated from " + oldVersion +  " to " + newVersion);
         // on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DRINKS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_INGREDIENTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPLETE);
  
         // create new tables
         onCreate(db);
@@ -93,7 +96,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int createDrink(Drink drink)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        Log.i("CREATE DRINK", "Creating Drink: " + drink.getDrinkName());
+        Log.i("DatabaseHelper:createDrink", "Creating Drink: " + drink.getDrinkName());
         
         // set values for drink in DB
         ContentValues values = new ContentValues();
@@ -114,17 +117,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public Drink getDrink(int drink_id) {
         SQLiteDatabase db = this.getReadableDatabase();
- 
         String selectQuery = "SELECT  * FROM " + TABLE_DRINKS + " WHERE "
                 + KEY_ID + " = " + drink_id;
- 
         Log.e(LOG, selectQuery);
- 
         Cursor c = db.rawQuery(selectQuery, null);
- 
         if (c != null)
             c.moveToFirst();
  
+        // set drink values
         Drink tempDrink = new Drink();
         tempDrink.setDrinkID(c.getInt(c.getColumnIndex(KEY_ID)));
         tempDrink.setDrinkName((c.getString(c.getColumnIndex(KEY_NAME))));
@@ -175,8 +175,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int updateDrink(Drink drink)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        
-        System.out.println("UPDATE DRINK " + drink.getCSVIngredient());
+        Log.i("DatabaseHelper:updateDrink ", "UPDATED " + drink.getCSVIngredient());
         
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, drink.getDrinkName());
@@ -227,8 +226,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     
     /****** INGREDIENTS_TABLE METHODS ******/
     
-    /**
-     * Creating ingredient
+    /*
+     * Creates ingredient
+     * 
+     *@param Ingredient ingredient
+     *@return int 
      */
     public int createIngredient(Ingredient ingredient) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -246,6 +248,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     /*
      * Get all ingredients
+     * 
+     * @return List<Ingredient>
      */
     public List<Ingredient> getAllIngredients() {
         List<Ingredient> ingredients = new ArrayList<Ingredient>();
@@ -274,6 +278,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     
     /*
      * Update ingredient
+     * 
+     * @param Ingredient ingredient
+     * @return int
      */
     public int updateIngredient(Ingredient ingredient) 
     {
@@ -286,6 +293,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.update(TABLE_INGREDIENTS, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(ingredient.getIngredientID()) });
     }
+    /*
+     * Returns the ingredient by the ID provided
+     * 
+     * @param int ingredient_id
+     * @return Ingredient - object from other drinkmate packages
+     */
     public Ingredient getIngredient(int ingredient_id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Ingredient temp = new Ingredient();
@@ -312,6 +325,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     
     /*
      * Delete ingredient
+     * 
+     * @param int ingredient_id
      */
     public void deleteIngredient(int ingredient_id) 
     {

@@ -7,6 +7,9 @@ import junit.framework.TestCase;
 /*
  * DrinkTest tests the Drink.java class
  * 
+ * 
+ * @Author(s): Jack Phillips, Jay Harris
+ * 
  * NOTE: MUST ADD TO ANDROID MANIFEST FOR TESTING TO WORK!
  *         <instrumentation
 		    android:name="android.test.InstrumentationTestRunner"

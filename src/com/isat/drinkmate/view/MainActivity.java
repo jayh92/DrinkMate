@@ -35,6 +35,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TabHost.TabSpec;
 
+/*
+ * MainActivity.java - Main Driver class for the DrinkMate Application. This class sets up all the tabs and listeners
+ * for on screen actions.
+ * 
+ * ISAT 480
+ * @Authors: Jack Phillips, Jay Harris, Dan Silvernail
+ */
 public class MainActivity extends Activity implements SensorEventListener {
 
 	// Ingredient Array - NOTE Drinks will reuse ingredients
@@ -61,9 +68,9 @@ public class MainActivity extends Activity implements SensorEventListener {
 			"Vodka Tonic,A variation on the Gin and Tonic this cocktail is one that is never going away,10,13,14",
 			"Virgin Cocktail,Take up your Designated Driver duties this weekend,2,11,13" };
 
-	private MultiSelectionSpinner spinner; // ingredient spinner
-	private Spinner drinkSpinner;		   // drink spinner
-	private DatabaseHelper db;			   // Database
+	private MultiSelectionSpinner spinner;	// ingredient spinner
+	private Spinner drinkSpinner;		    // drink spinner
+	private DatabaseHelper db;			    // Database
 	private ArrayList<Ingredient> ingredients;
 	private ArrayList<Drink> drinks;
 	
@@ -112,7 +119,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 			tabHost.addTab(specBAC);
 		}
 		catch (Exception e) {
-			Log.e("TAB ERROR", "Error with initializing TabHost");
+			Log.e("MainActivity:onCreate", "Error with initializing TabHost");
 		}
 		
 		// sensor
@@ -122,7 +129,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 			lastUpdate = System.currentTimeMillis();
 		}
 		catch (Exception e) {
-			Log.e("SENSOR ERROR", "Error initializing Accelerometer Sensor");
+			Log.e("MainActivity:onCreate", "Error initializing Accelerometer Sensor");
 		}
 		
 		// initialize DB and ArrayLists
@@ -160,7 +167,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 			}
 		}
 		catch (Exception e) {
-			Log.e("ERROR DRINK ARRAY", "Error using ARRAYS");
+			Log.e("MainActivity:onCreate", "Error using DRINK_ARRAY");
 		}
 		// populate name array
 		try {
@@ -169,7 +176,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 			}
 		}
 		catch (Exception e) {
-			Log.e("ERROR INGREDIENT ARRAY", "Error using ARRAYS");
+			Log.e("MainActivity:onCreate", "Error using INGREDIENT_ARRAY");
 		}
 		try {
 			// set Drink IDs in ArrayList<Drink>
@@ -187,17 +194,22 @@ public class MainActivity extends Activity implements SensorEventListener {
 			}
 		}
 		catch (Exception e) {
-			Log.e("MainActivity:OnCreate", "Failed to create Drink");
+			Log.e("MainActivity:onCreate", "Failed to create Drink");
 		}
 		
 		// close database
 		db.close();
-
-		// setup spinner for search by ingredient
-		spinner = (MultiSelectionSpinner) findViewById(R.id.mySpinner1); // ingredients
-		ingredientNameArray.add(0, ""); // add blank ingredient for display purposes
-		spinner.setItems(ingredientNameArray); // set MultiSelectionSpinner for ingredients
 		
+		try {
+			// setup spinner for search by ingredient
+			spinner = (MultiSelectionSpinner) findViewById(R.id.mySpinner1); // ingredients
+			ingredientNameArray.add(0, ""); // add blank ingredient for display purposes
+			spinner.setItems(ingredientNameArray); // set MultiSelectionSpinner for ingredients
+		}
+		catch (Exception e) {
+			Log.e("MainActivity:onCreate", "ERROR setting up Ingredient Spinner");
+		}
+		try {
 		// setup spinner for browse by drink
 		drinkNameArray.add(0, "");
 		Collections.sort(drinkNameArray); // alphabetize
@@ -205,6 +217,10 @@ public class MainActivity extends Activity implements SensorEventListener {
 		ArrayAdapter dataAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, drinkNameArray);
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		drinkSpinner.setAdapter(dataAdapter);
+		}
+		catch (Exception e) {
+			Log.e("MainActivity:onCreate", "ERROR setting up Drink Spinner");
+		}
 	}
 	
 	
@@ -307,7 +323,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 	 * Searches by ingredients for the most suitable drink - used by SEARCH tab
 	 * 
 	 * @param String query
-	 * 
 	 * @return String result
 	 */
 	public String getSearchResult(String query, List<Integer> ingredientID) {
@@ -417,36 +432,40 @@ public class MainActivity extends Activity implements SensorEventListener {
 	 * @param BacCalculator calc - object that represents user BAC calc
 	 */
 	public void showBACResults(BacCalculator calc) {
-
-		// result of calculations TextView
-		TextView res = (TextView) findViewById(R.id.resultTv);
-		res.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-
-		// provide message to user and set text color
-		double bacCheck = calc.getBac();
-		if (bacCheck <= 0) {
-			Toast.makeText(getApplicationContext(), "You're Sober",
-					Toast.LENGTH_SHORT).show();
-			res.setTextColor(Color.GREEN);
-		} else if (bacCheck >= 0 && bacCheck <= 0.08) {
-			Toast.makeText(getApplicationContext(),
-					"You're not above the legal limit", Toast.LENGTH_LONG)
-					.show();
-			res.setTextColor(Color.BLUE);
-		} else if (bacCheck >= 0.08 && bacCheck <= .18) {
-			Toast.makeText(getApplicationContext(), "DO NOT DRIVE!",
-					Toast.LENGTH_SHORT).show();
-			res.setTextColor(Color.YELLOW);
-		} else if (bacCheck >= .18) {
-			Toast.makeText(getApplicationContext(), "SEEK MEDICAL ATTENTION!",
-					Toast.LENGTH_SHORT).show();
-			res.setTextColor(Color.RED);
-		} else
-			Toast.makeText(getApplicationContext(), "Invalid Input",
-					Toast.LENGTH_LONG).show();
-
-		// set text on screen
-		res.setText(calc.getBacString());
+		try {
+			// result of calculations TextView
+			TextView res = (TextView) findViewById(R.id.resultTv);
+			res.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+	
+			// provide message to user and set text color
+			double bacCheck = calc.getBac();
+			if (bacCheck <= 0) {
+				Toast.makeText(getApplicationContext(), "You're Sober",
+						Toast.LENGTH_SHORT).show();
+				res.setTextColor(Color.GREEN);
+			} else if (bacCheck >= 0 && bacCheck <= 0.08) {
+				Toast.makeText(getApplicationContext(),
+						"You're not above the legal limit", Toast.LENGTH_LONG)
+						.show();
+				res.setTextColor(Color.BLUE);
+			} else if (bacCheck >= 0.08 && bacCheck <= .18) {
+				Toast.makeText(getApplicationContext(), "DO NOT DRIVE!",
+						Toast.LENGTH_SHORT).show();
+				res.setTextColor(Color.YELLOW);
+			} else if (bacCheck >= .18) {
+				Toast.makeText(getApplicationContext(), "SEEK MEDICAL ATTENTION!",
+						Toast.LENGTH_SHORT).show();
+				res.setTextColor(Color.RED);
+			} else
+				Toast.makeText(getApplicationContext(), "Invalid Input",
+						Toast.LENGTH_LONG).show();
+	
+			// set text on screen
+			res.setText(calc.getBacString());
+		}
+		catch (Exception e) {
+			Log.e("MainActivity:showBACResults", "Failed to set BAC output on view");
+		}
 	}
 
 	/*
@@ -455,22 +474,27 @@ public class MainActivity extends Activity implements SensorEventListener {
 	 * @param View view
 	 */
 	public void clearForm(View view) {
-		// get values
-		EditText oz = (EditText) findViewById(R.id.ouncesEt);
-		EditText perc = (EditText) findViewById(R.id.percentEt);
-		EditText gender = (EditText) findViewById(R.id.genderEt);
-		EditText weight = (EditText) findViewById(R.id.weightEt);
-		EditText hours = (EditText) findViewById(R.id.timeEt);
-		TextView res = (TextView) findViewById(R.id.resultTv);
-
-		// set them to blanks and set hints
-		oz.setText("");
-		perc.setText("");
-		gender.setText("");
-		weight.setText("");
-		hours.setText("");
-		res.setText("");
-		res.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+		try {
+			// get values
+			EditText oz = (EditText) findViewById(R.id.ouncesEt);
+			EditText perc = (EditText) findViewById(R.id.percentEt);
+			EditText gender = (EditText) findViewById(R.id.genderEt);
+			EditText weight = (EditText) findViewById(R.id.weightEt);
+			EditText hours = (EditText) findViewById(R.id.timeEt);
+			TextView res = (TextView) findViewById(R.id.resultTv);
+	
+			// set them to blanks and set hints
+			oz.setText("");
+			perc.setText("");
+			gender.setText("");
+			weight.setText("");
+			hours.setText("");
+			res.setText("");
+			res.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+		}
+		catch (Exception e) {
+			Log.e("MainActivity:clearForm", "Failed to Clear BAC form");
+		}
 	}
 
 	/*
@@ -486,8 +510,9 @@ public class MainActivity extends Activity implements SensorEventListener {
 		double amount = 0;
 
 		// check to see if three values are present
-		if (splitArray.length != 3)
-			System.out.println("INVALID PARAM Length = " + ingredient.length());
+		if (splitArray.length != 3) {
+			Log.i("MainActivity:makeIngredient", "INVALID PARAM Length = " + ingredient.length());
+		}
 
 		for (int i = 0; i < splitArray.length; i++) {
 			String tempName = splitArray[0];
@@ -497,7 +522,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 				try {
 					amount = Double.parseDouble(splitArray[i]);
 				} catch (Exception e) {
-					Log.e("Make ingredient","Could not parse double");
+					Log.e("MainActivity:makeIngredient", "Could not parse double ofr ingredient");
 				}
 			}
 			tempIngredient.setIngredientName(tempName);
@@ -514,7 +539,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 	 * @return Drink
 	 */
 	public Drink makeDrink(String drink) {
-		Log.i("MainActivity: makeDrink", drink);
 		Drink tempDrink = new Drink();
 		ArrayList<Ingredient> drinkIngredients = new ArrayList<Ingredient>();
 

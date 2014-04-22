@@ -1,8 +1,16 @@
 package com.isat.drinkmate.controller;
 
 import java.text.DecimalFormat;
-
+/*
+ * BacCalculator.java
+ * 
+ * Class represents a BAC calculator for our application
+ * 
+ * ISAT 480
+ * Author(s): Jack Phillips
+ */
 public class BacCalculator {
+	// set up constants for genders
 	public static final double MAN_CONSTANT = .58;
 	public static final double WOMAN_CONSTANT = .49;
 
@@ -54,13 +62,9 @@ public class BacCalculator {
 	 * Overloaded Constructor
 	 * 
 	 * @param int ounces
-	 * 
 	 * @param double percent
-	 * 
 	 * @param double weight
-	 * 
 	 * @param double hoursDrinking
-	 * 
 	 * @param String gender
 	 */
 	public BacCalculator(int ounces, double percent, double weight,
@@ -133,11 +137,8 @@ public class BacCalculator {
 	 * for negative values.
 	 * 
 	 * @param int ounces - ounces of alcohol consumed
-	 * 
 	 * @param double percent - alcohols percentage
-	 * 
 	 * @param double weight - weight of user
-	 * 
 	 * @param int hoursDrinking - time drinking
 	 * 
 	 * @return double result
@@ -162,26 +163,45 @@ public class BacCalculator {
 
 		return result;
 	}
-
 	/*
-	 * All get methods
+	 * Returns the users gender
+	 * 
+	 * @return String
 	 */
 	public String getGender() {
 		return this.gender;
 	}
-
+	/*
+	 * Returns the number of ounces
+	 * 
+	 * @return int
+	 */
 	public int getOunces() {
 		return this.ounces;
 	}
-
+	/*
+	 * Returns the users weight
+	 * 
+	 * @return double
+	 */
 	public double getWeight() {
 		return this.weight;
 	}
 
+	/*
+	 * Returns the number of hours
+	 * 
+	 * @return double
+	 */
 	public double getHours() {
 		return this.hoursDrinking;
 	}
-
+	
+	/*
+	 * Returns the users blood alcohol content
+	 * 
+	 * @return double
+	 */
 	public Double getPercent() {
 		return this.percent;
 	}

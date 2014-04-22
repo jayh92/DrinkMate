@@ -5,6 +5,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /*
+ * Drink.java
+ * 
  * Class represents a single Drink to be used with our DrinkMate application
  * 
  * ISAT 480
