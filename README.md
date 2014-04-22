@@ -44,6 +44,7 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
 - 4/15/14: Modifications to database necessary current implementation will work but is clunky.
 - 4/18/14: All for debugging and application information has been converted into a LogCat implementation.
 - 4/21/14: Database V.3 is being used. Code cleaned up in MainActivity.java and DatabaseHelper.java
+- 4/22/14: Removed/Commented on existing code and added try/catch blocks to make application more safe.
 
 | TESTING |
 
@@ -89,8 +90,8 @@ Developers: Jay Harris, Dan Silvernail, Jack Phillips
 | NOTES |
 
 - Further formatting of tabbed views not necessary but would add visual appeal
-- CSV for ingredients in Drinks table may need to be changed for scalability
 - Look into splash screens at beginning of program if the database gets heafty and needs to load.
 - Made Drink.java "Parcelable" to pass data in a Bundle from one intent to another. By default Android will not let you pass user created objects between Activities.
 - All tabs are processed at MainActivity.java
-- In later Android versions FragmentTabs are more common than our implementation (may be API issues however for Fragment)
+- In later Android versions FragmentTabs are more common than our implementation but this may cause issues with older Android devices before the API change. 
+- Performed device porting by running application in the Eclipse emulator and copied the .apk from /bin. Because this will automatically SIGN the application and make it able to run on the device.  
